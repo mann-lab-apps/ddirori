@@ -10,6 +10,8 @@ for(const name of ['index','score','play','studio','support','privacy']){
  const html=fs.readFileSync(path.join(dist,name==='index'?'index.html':name+'/index.html'),'utf8');
  assert.equal((html.match(/<h1[ >]/g)||[]).length,1,`${name}: one heading`);
  assert(html.includes(`https://ddirori.com${name==='index'?'/':'/'+name+'/'}`),`${name}: canonical`);
+ assert(html.includes(`name="robots" content="${base?'noindex,nofollow':'index,follow'}"`),`${name}: production indexing / staging exclusion`);
+ assert(!html.includes('href="https://in-c.mannlab.app/'),`${name}: no legacy support links`);
  for(const [,attribute,value]of html.matchAll(/(href|src)="([^\"]+)"/g)){
   if(!value.startsWith('/'))continue;
   const url=new URL(value,'https://ddirori.com');

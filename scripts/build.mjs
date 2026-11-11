@@ -25,7 +25,11 @@ function rewrite(html,name){
     .replace(/(<meta property="og:url" content=")[^"]*(")/,'$1'+canonical+'$2')
     .replace(/(<meta property="og:image" content=")[^"]*(")/,'$1https://ddirori.com/assets/social-preview.png$2');
   // The GitHub project URL is a staging address while the domain is pending.
-  if(base)html=html.replace(/(<meta name="robots" content=")[^"]*(")/,'$1noindex,nofollow$2');
+  html=html.replace(/(<meta name="robots" content=")[^"]*(")/,'$1'+(base?'noindex,nofollow':'index,follow')+'$2');
+  const title=html.match(/<title>(.*?)<\/title>/)?.[1]??'띠로리';
+  const description=html.match(/<meta name="description" content="([^"]*)"/)?.[1]??'';
+  html=html.replace(/(<meta property="og:title" content=")[^"]*(")/,'$1'+title+'$2').replace(/(<meta property="og:description" content=")[^"]*(")/,'$1'+description+'$2');
+  if(!html.includes('property="og:url"'))html=html.replace('</head>',`<meta property="og:url" content="${canonical}"></head>`);
   return html;
 }
 fs.rmSync(dist,{recursive:true,force:true});

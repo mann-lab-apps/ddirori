@@ -2,7 +2,7 @@
 
 띠로리 스코어·플레이·스튜디오를 소개하는 하나의 공식 웹사이트입니다. 운영: Mannlab.
 
-- 대표 도메인: https://ddirori.com (등록·DNS 연결 확인 전)
+- 대표 도메인: https://ddirori.com (도메인 구매 완료, DNS·HTTPS 연결 확인 대기)
 - 경로: `/score/`, `/play/`, `/studio/`, `/support/`, `/privacy/`
 - 기존 in-c 웹사이트와 앱 배포는 이 저장소에서 변경하지 않습니다.
 
@@ -38,3 +38,10 @@ GitHub DNS 검사·HTTPS 인증서 완료 후 다시 배포해 루트 경로를 
 ## 화면과 다운로드 출처
 
 Score의 3개 화면은 공개 1.0.2 App Store 원본이며 Clef & Staff라는 현재 공개 이름이 보입니다. 출처·실제 hash는 `src/assets/sources.json`에 있습니다. Studio·Play 이미지는 개발 화면이며 공개 빌드와의 차이를 본문에 표시합니다. 글꼴 라이선스는 `src/assets/FONT-LICENSE.txt`입니다. 웹 화면 검사는 네이티브 앱 QA나 스토어 캡처 검수를 대신하지 않습니다.
+
+## 2026-11-11 배포 확인
+
+- GitHub Pages의 custom domain: `ddirori.com`. 기존 in-c Pages 설정은 변경하지 않았습니다.
+- 사용자가 생성한 새 웹 스트림 ID `G-KFJBY01RKT`를 Actions variable에 등록했습니다. 웹 방문·클릭 측정이며 앱 내부 계측이 아닙니다.
+- 첫 배포: https://github.com/mann-lab-apps/ddirori/actions/runs/42954392575 — 성공. GitHub 원본 서버에 Host를 지정한 HTTP 확인에서 `/score/` 200과 배포된 새 측정 ID를 확인했습니다. 이 검사는 공개 DNS·HTTPS·GA 콘솔 수신 확인을 대신하지 않습니다.
+- 브라우저 QA는 Google 스크립트를 대체해 실제 분석 트래픽을 보내지 않았으며 24개 표시 조합·175개 검사를 통과했습니다.
