@@ -1,0 +1,78 @@
+{
+  "verified_at_utc": "2026-11-11T04:00:16.033Z",
+  "site": "https://ddirori.com/",
+  "source_commit": "0ff23d287677ee9dd1b9a8eadfe0eccc111546c9",
+  "actions_run": "https://github.com/mann-lab-apps/ddirori/actions/runs/42954769697",
+  "dns": {
+    "nameservers": [
+      "ns-1905.awsdns-46.co.uk",
+      "ns-1089.awsdns-08.org",
+      "ns-471.awsdns-58.com",
+      "ns-898.awsdns-48.net"
+    ],
+    "apex_a": [
+      "185.199.108.153",
+      "185.199.109.153",
+      "185.199.110.153",
+      "185.199.111.153"
+    ],
+    "www_cname": "mann-lab-apps.github.io",
+    "authoritative_records_verified": true
+  },
+  "https": {
+    "apex_verified": true,
+    "enforced": true,
+    "www_certificate": "pending GitHub resolver/provisioning"
+  },
+  "ga4": {
+    "measurement_id": "G-KFJBY01RKT",
+    "created_by": "user",
+    "test_campaign": "launch_verification",
+    "test_source": "codex_setup",
+    "test_medium": "qa",
+    "collection_responses": [
+      {
+        "status": 204,
+        "measurementId": "G-KFJBY01RKT",
+        "event": "page_view",
+        "debug": null
+      },
+      {
+        "status": 204,
+        "measurementId": "G-KFJBY01RKT",
+        "event": "score_store_click",
+        "debug": null
+      }
+    ],
+    "console_reporting_verified": false
+  },
+  "pages": [
+    {
+      "path": "/score/",
+      "status": 200,
+      "h1": "악보를 펼치면,연습도 함께.",
+      "storeLinks": 3
+    },
+    {
+      "path": "/",
+      "status": 200
+    },
+    {
+      "path": "/play/",
+      "status": 200
+    },
+    {
+      "path": "/studio/",
+      "status": 200
+    },
+    {
+      "path": "/support/",
+      "status": 200
+    },
+    {
+      "path": "/privacy/",
+      "status": 200
+    }
+  ],
+  "browser_notes": "Published HTTPS site; browser uses current authoritative GitHub IP because the local DNS resolver still caches the earlier negative answer. QA campaign is not organic acquisition. GA console aggregation is not observed."
+}

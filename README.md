@@ -2,7 +2,7 @@
 
 띠로리 스코어·플레이·스튜디오를 소개하는 하나의 공식 웹사이트입니다. 운영: Mannlab.
 
-- 대표 도메인: https://ddirori.com (도메인 구매 완료, DNS·HTTPS 연결 확인 대기)
+- 대표 도메인: https://ddirori.com (대표 주소 HTTPS 공개 완료)
 - 경로: `/score/`, `/play/`, `/studio/`, `/support/`, `/privacy/`
 - 기존 in-c 웹사이트와 앱 배포는 이 저장소에서 변경하지 않습니다.
 
@@ -45,3 +45,9 @@ Score의 3개 화면은 공개 1.0.2 App Store 원본이며 Clef & Staff라는 �
 - 사용자가 생성한 새 웹 스트림 ID `G-KFJBY01RKT`를 Actions variable에 등록했습니다. 웹 방문·클릭 측정이며 앱 내부 계측이 아닙니다.
 - 첫 배포: https://github.com/mann-lab-apps/ddirori/actions/runs/42954392575 — 성공. GitHub 원본 서버에 Host를 지정한 HTTP 확인에서 `/score/` 200과 배포된 새 측정 ID를 확인했습니다. 이 검사는 공개 DNS·HTTPS·GA 콘솔 수신 확인을 대신하지 않습니다.
 - 브라우저 QA는 Google 스크립트를 대체해 실제 분석 트래픽을 보내지 않았으며 24개 표시 조합·175개 검사를 통과했습니다.
+
+## 공개 연결 검증
+
+`deployment-status.json`은 확인 당시의 결과입니다. `ddirori.com`의 HTTPS와 HTTP→HTTPS 강제 전환을 확인했고 여섯 페이지가 200으로 응답했습니다. 새 GA 속성의 `page_view`와 `score_store_click`이 Google 수집 서버에서 204를 받았습니다. 콘솔 집계는 별도이며, 설정 테스트는 `codex_setup / qa`, 캠페인 `launch_verification`으로 구분합니다.
+
+`www` CNAME도 Route 53에서 확인했지만 GitHub 측 이전 NXDOMAIN 캐시와 별칭 인증서 반영은 당시 대기 상태였습니다. 대표 주소의 정상 접속과 별개로 확인합니다.
