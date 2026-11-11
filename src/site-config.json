@@ -1,0 +1,22 @@
+{
+  "origin": "https://ddirori.com",
+  "contactEmail": "daga4242@gmail.com",
+  "supportUrl": "https://in-c.mannlab.app/support.html",
+  "privacyUrl": "https://in-c.mannlab.app/privacy.html",
+  "downloadManifest": "download-manifest.json",
+  "services": {
+    "studio": {
+      "status": "기존 공개 빌드 제공"
+    },
+    "score": {
+      "status": "App Store 무료 제공",
+      "storeName": "Clef & Staff",
+      "brandName": "띠로리 스코어",
+      "storeUrl": "https://apps.apple.com/kr/app/id6808164371",
+      "pageUrl": "https://ddirori.com/score/"
+    },
+    "play": {
+      "status": "공개 준비 중"
+    }
+  }
+}

@@ -1,0 +1,122 @@
+[
+  {
+    "asset": "wordmark.svg",
+    "source": "docs/brand/ddirori-brand-system/assets/wordmark-ko-ink.svg",
+    "kind": "existing repository asset"
+  },
+  {
+    "asset": "bach.svg",
+    "source": "docs/brand/ddirori-brand-system/assets/bach-surprised.svg",
+    "kind": "existing repository asset"
+  },
+  {
+    "asset": "bach-happy.svg",
+    "source": "docs/brand/ddirori-brand-system/assets/bach-happy.svg",
+    "kind": "existing repository asset"
+  },
+  {
+    "asset": "font.woff2",
+    "source": "docs/brand/ddirori-visuals/fonts/PretendardVariable.woff2",
+    "kind": "existing repository asset"
+  },
+  {
+    "asset": "FONT-LICENSE.txt",
+    "source": "docs/brand/ddirori-visuals/fonts/LICENSE.txt",
+    "kind": "existing repository asset"
+  },
+  {
+    "asset": "score-screen.png",
+    "source": "docs/brand/ddirori-design-system/evidence/adoption-pilot/score-blue-selected-light.png",
+    "kind": "existing repository asset; development capture"
+  },
+  {
+    "asset": "play-screen.png",
+    "source": "docs/brand/ddirori-design-system/returns/play-apple-library-2026-10-26/screens/apple-library-home-390-light.png",
+    "kind": "existing repository asset; development capture"
+  },
+  {
+    "asset": "poster.svg",
+    "source": "site/public/assets/posters/one-page-recital.svg",
+    "kind": "existing repository asset"
+  },
+  {
+    "asset": "brand-icon.svg",
+    "source": "docs/brand/ddirori-brand-system/icon-family-v8/generated/blue/brand.svg",
+    "kind": "existing brand candidate"
+  },
+  {
+    "asset": "studio-icon.svg",
+    "source": "docs/brand/ddirori-brand-system/icon-family-v8/generated/blue/studio.svg",
+    "kind": "existing brand candidate"
+  },
+  {
+    "asset": "score-icon.svg",
+    "source": "docs/brand/ddirori-brand-system/icon-family-v8/generated/blue/score.svg",
+    "kind": "existing brand candidate"
+  },
+  {
+    "asset": "play-icon.svg",
+    "source": "docs/brand/ddirori-brand-system/icon-family-v8/generated/blue/play.svg",
+    "kind": "existing brand candidate"
+  },
+  {
+    "asset": "stage-icon.svg",
+    "source": "docs/brand/ddirori-brand-system/assets/icon-stage.svg",
+    "kind": "existing brand asset"
+  },
+  {
+    "asset": "talk-icon.svg",
+    "source": "docs/brand/ddirori-brand-system/assets/icon-talk.svg",
+    "kind": "existing brand asset"
+  },
+  {
+    "asset": "click-icon.svg",
+    "source": "docs/brand/ddirori-brand-system/assets/icon-click.svg",
+    "kind": "existing brand asset"
+  },
+  {
+    "asset": "chime-icon.svg",
+    "source": "docs/brand/ddirori-brand-system/assets/icon-chime.svg",
+    "kind": "existing brand asset"
+  },
+  {
+    "asset": "studio-screen.png",
+    "source": "docs/brand/ddirori-brand-system/score-reference/captures/studio-bwv565.png",
+    "kind": "actual Studio renderer capture; unchanged bitmap; BWV 565 opening measure imported via public MusicXML command",
+    "capture": "scripts/capture-ddirori-studio-brand.cjs",
+    "provenance": "docs/brand/ddirori-brand-system/score-reference/captures/capture.json"
+  },
+  {
+    "asset": "studio-export-bwv565.svg",
+    "source": "docs/brand/ddirori-brand-system/score-reference/captures/bwv565-opening-studio.pdf",
+    "kind": "first page of actual Studio PDF export converted by pdftocairo; not the external Mutopia engraving",
+    "score": "docs/brand/ddirori-brand-system/score-reference/bwv565-opening.musicxml"
+  },
+  {
+    "asset": "score-public-library.jpg",
+    "source": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/2c/7d/b5/2c7db5af-7261-5a9a-5632-dbda3c469e01/iphone-65-01-library.png/924x2000bb.jpg",
+    "kind": "Unchanged screenshot from the public Korean App Store listing; old brand visible",
+    "appId": 6808164371,
+    "version": "1.0.2",
+    "retrievedOn": "2026-11-11",
+    "sha256": "42ca4e04931ed6c212122b0dcaa335d8de3088b8f61e19898f7f385bcc4d29bf"
+  },
+  {
+    "asset": "score-public-annotation.jpg",
+    "source": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/31/f0/19/31f01923-65a9-1522-301e-b45f2436a193/iphone-65-02-score.png/924x2000bb.jpg",
+    "kind": "Unchanged screenshot from the public Korean App Store listing; old brand visible",
+    "appId": 6808164371,
+    "version": "1.0.2",
+    "retrievedOn": "2026-11-11",
+    "sha256": "eb19e93bddb3f1a5175cc338e0838873bcb3ee70c31f979ae4fd5c4f6dd69c56"
+  },
+  {
+    "asset": "score-public-tuner.jpg",
+    "source": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/f6/ce/6e/f6ce6e73-b909-fb0b-828b-526529d25d86/iphone-65-03-tuner.png/924x2000bb.jpg",
+    "kind": "Unchanged screenshot from the public Korean App Store listing; old brand visible",
+    "appId": 6808164371,
+    "version": "1.0.2",
+    "retrievedOn": "2026-11-11",
+    "sha256": "0b73a49c675e59a9328605c2ceacb8134ba8ed7e121c7cda20dc4e60289aefb7"
+  }
+]

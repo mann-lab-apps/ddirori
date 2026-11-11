@@ -1,0 +1,22 @@
+/* Score introduction: public app imagery, shared Ddirori color and type. */
+figure{margin:0}
+.score-hero{align-items:center}
+.score-store-note{margin-top:20px;line-height:1.8}
+.score-public-hero{background:var(--selection);border-radius:28px;display:flex;flex-direction:column;align-items:center;padding:30px 24px 22px;gap:20px;min-width:0}
+.score-scene-label{font-size:16px;font-weight:600;color:var(--action);text-align:center}
+.score-public-hero>img,.score-public-detail>img{width:228px;max-width:100%;height:auto;border-radius:24px;box-shadow:0 16px 45px #20202012}
+.score-public-hero figcaption,.score-public-detail figcaption{color:var(--muted);font-size:12px;text-align:center;line-height:1.7}
+.score-public-detail{display:flex;flex-direction:column;align-items:center;gap:16px;padding:30px;background:var(--selection);border-radius:24px;min-width:0}
+.score-tuner{background:var(--surface-muted)}
+.score-workflow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:36px}
+.score-workflow article{border-top:2px solid var(--brand);padding-top:24px}
+.score-workflow .step{color:var(--action);font-size:14px;font-weight:600}
+.score-workflow h3{font-size:23px;letter-spacing:-.035em;margin-top:18px}
+.score-workflow p{font-size:17px;line-height:1.8;color:var(--muted);margin-top:14px}
+.score-download{text-align:center}
+.score-download>.service-icon{margin:0 auto 22px}
+.score-download .lead{margin:22px auto}
+.score-download .actions{justify-content:center}
+.score-download>.caption{margin-top:16px}
+.score-download>.text-link{margin-top:24px;display:inline-block}
+@media(max-width:760px){.score-public-hero{padding:24px 16px 20px}.score-public-hero>img{width:218px}.score-workflow{grid-template-columns:1fr;gap:30px}.score-workflow h3{font-size:22px}.score-public-detail>img{width:210px}.score-scene-label{font-size:14px}}
