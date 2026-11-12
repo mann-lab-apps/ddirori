@@ -6,6 +6,8 @@
 - 경로: `/score/`, `/play/`, `/studio/`, `/support/`, `/privacy/`
 - 기존 in-c 웹사이트와 앱 배포는 이 저장소에서 변경하지 않습니다.
 
+유입 개선 작업과 SEO·AI 검색 후보는 [띠로리 스코어 유입 개선 백로그](docs/acquisition-backlog.md)에서 관리합니다.
+
 ## 수정과 배포
 
 `src/`의 HTML·CSS·JS를 수정합니다. Node 22만 필요합니다.
