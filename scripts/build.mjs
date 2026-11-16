@@ -10,8 +10,9 @@ const base=rawBase.replace(/\/$/,'');
 const measurementId=(process.env.GA4_MEASUREMENT_ID??'').trim();
 if(measurementId && !/^G-[A-Z0-9]+$/.test(measurementId))throw Error('Invalid GA4 measurement ID');
 if(measurementId==='G-1BY2PWFWXR')throw Error('Use the new Ddirori stream, not the legacy in-c ID');
-const routes=['index','score','play','studio','support','privacy'];
-const destination=name=>name==='index'?`${base}/`:`${base}/${name}/`;
+const routes=['index','score','play','studio','support','privacy','play-privacy'];
+const routePath=name=>name==='play-privacy'?'play/privacy':name;
+const destination=name=>name==='index'?`${base}/`:`${base}/${routePath(name)}/`;
 function rewrite(html,name){
   html=html.replace(/(href|src)="\.\/([^\"]+)"/g,(_,attribute,value)=>{
     const page=value.match(/^([a-z-]+)\.html(.*)$/);
@@ -20,7 +21,7 @@ function rewrite(html,name){
   html=html.replaceAll('https://in-c.mannlab.app/clef-and-staff/support.html',destination('support'))
     .replaceAll('https://in-c.mannlab.app/support.html',destination('support'))
     .replaceAll('https://in-c.mannlab.app/privacy.html',destination('privacy'));
-  const canonical=`https://ddirori.com${name==='index'?'/':'/'+name+'/'}`;
+  const canonical=`https://ddirori.com${name==='index'?'/':'/'+routePath(name)+'/'}`;
   html=html.replace(/(<link rel="canonical" href=")[^"]*(")/,'$1'+canonical+'$2')
     .replace(/(<meta property="og:url" content=")[^"]*(")/,'$1'+canonical+'$2')
     .replace(/(<meta property="og:image" content=")[^"]*(")/,'$1https://ddirori.com/assets/social-preview.png$2');
@@ -37,7 +38,7 @@ fs.cpSync(source,dist,{recursive:true});
 for(const name of routes){
   const file=path.join(source,name+'.html');
   const html=rewrite(fs.readFileSync(file,'utf8'),name);
-  const directory=name==='index'?dist:path.join(dist,name);
+  const directory=name==='index'?dist:path.join(dist,routePath(name));
   fs.mkdirSync(directory,{recursive:true});
   fs.writeFileSync(path.join(directory,'index.html'),html);
   // Existing shared links and bookmarks remain usable too.
@@ -52,5 +53,5 @@ const privacyHtml=fs.readFileSync(privacy,'utf8').replaceAll('분석 상태: 설
 fs.writeFileSync(privacy,privacyHtml);fs.writeFileSync(path.join(dist,'privacy.html'),privacyHtml);
 fs.writeFileSync(path.join(dist,'.nojekyll'),'');
 fs.writeFileSync(path.join(dist,'robots.txt'),`User-agent: *\n${base?'Disallow: /':'Allow: /'}\nSitemap: https://ddirori.com/sitemap.xml\n`);
-fs.writeFileSync(path.join(dist,'sitemap.xml'),'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+routes.map(name=>`  <url><loc>https://ddirori.com${name==='index'?'/':'/'+name+'/'}</loc></url>`).join('\n')+'\n</urlset>\n');
+fs.writeFileSync(path.join(dist,'sitemap.xml'),'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+routes.map(name=>`  <url><loc>https://ddirori.com${name==='index'?'/':'/'+routePath(name)+'/'}</loc></url>`).join('\n')+'\n</urlset>\n');
 console.log(`Built ${routes.length} pages; base=${base||'/'}; GA=${measurementId?'configured':'disabled (new stream pending)'}`);
