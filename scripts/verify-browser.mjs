@@ -63,6 +63,14 @@ try{
  check('Score explains the public store name',/Clef & Staff/.test(await page.locator('.score-store-note').textContent()));
  check('Score does not claim an unreleased app',!(await page.locator('main').textContent()).includes('공개 준비 중'));
  check('Score presents three public reference images',await page.locator('img[src*="score-public-"]').count()===3);
+ const recruitmentLink=page.getByRole('link',{name:'안드로이드 테스트 참여',exact:true});
+ await recruitmentLink.focus();
+ await page.keyboard.press('Enter');
+ await page.waitForURL(url=>url.hash==='#android-test');
+ const recruitment=page.getByRole('region',{name:'안드로이드 테스터를 모집합니다.'});
+ const applyByEmail=recruitment.getByRole('link',{name:'이메일로 테스트 신청하기'});
+ const applicationUrl=new URL(await applyByEmail.getAttribute('href'));
+ check('mobile Android recruitment offers a draft and the same visible email address',await applyByEmail.isVisible()&&applicationUrl.protocol==='mailto:'&&(await recruitment.locator('#android-test-email').textContent())===applicationUrl.pathname);
  check('private and local Score previews do not load GA',await page.evaluate(()=>!window.gtag&&!document.querySelector('script[src*="googletagmanager.com"]')));
  await page.getByText('왜 App Store에는 Clef & Staff라고 나오나요?',{exact:true}).click();
  check('Score rename FAQ opens',await page.locator('.faq details').first().getAttribute('open')!==null);
@@ -83,6 +91,8 @@ try{
  await noJs.goto(new URL('studio.html',base).href);
  check('no-JS fallback includes real manifest link',/github\.com/.test(await noJs.locator('[data-download-link]').getAttribute('href')));
  check('no-JS visitors can access all service links',await noJs.locator('.footer-links').getByRole('link',{name:/^띠로리 (스튜디오|스코어|플레이)$/}).count()===3);
+ await noJs.goto(new URL('score.html#android-test',base).href);
+ check('Android applicants can read the address without a mail handler or JavaScript',await noJs.locator('#android-test-email').isVisible());
  // Exercise the real production-host gate without sending any QA hits to Google.
  const measured=await browser.newPage();
  await measured.route('https://ddirori.com/**',async route=>{
