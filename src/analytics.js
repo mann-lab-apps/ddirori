@@ -3,6 +3,23 @@ const pendingEvents = []
 const maxPendingEvents = 25
 let analyticsState = 'pending'
 
+// The QA flag belongs to this tab so a test journey stays excluded after navigation.
+const query = new URLSearchParams(location.search)
+const qaKey = 'ddirori-analytics-qa'
+function excludeQa() {
+  const flag = query.get('qa')
+  const test = flag === '1' || query.get('utm_medium') === 'qa' || query.get('utm_source') === 'codex_setup'
+  try {
+    if (test) sessionStorage.setItem(qaKey, '1')
+    else if (flag === '0') sessionStorage.removeItem(qaKey)
+    return test || sessionStorage.getItem(qaKey) === '1'
+  } catch {
+    return test
+  }
+}
+const excluded = !['ddirori.com', 'www.ddirori.com'].includes(location.hostname) || excludeQa()
+let initialization
+
 const allowedEventParams = new Set([
   'answer',
   'app_name',
@@ -56,10 +73,11 @@ const appendScript = (src) =>
     document.head.append(script)
   })
 
-export const configureAnalytics = async () => {
+const initialize = async () => {
   try {
     const response = await fetch(analyticsConfigUrl)
     if (!response.ok) {
+      disableAnalytics()
       return
     }
 
@@ -99,12 +117,20 @@ export const configureAnalytics = async () => {
   }
 }
 
+export const configureAnalytics = () => {
+  if (excluded) {
+    disableAnalytics()
+    return Promise.resolve()
+  }
+  return initialization ??= initialize()
+}
+
 export const trackEvent = (name, params = {}) => {
-  if (analyticsState === 'disabled') {
+  if (excluded || analyticsState === 'disabled') {
     return
   }
 
-  if (typeof window.gtag !== 'function') {
+  if (analyticsState !== 'ready') {
     if (pendingEvents.length < maxPendingEvents) {
       pendingEvents.push([name, sanitizeParams(params)])
     }

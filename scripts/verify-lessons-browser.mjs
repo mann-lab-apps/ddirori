@@ -166,12 +166,42 @@ try {
   const startParams = await probe.evaluate(() => window.dataLayer.find(x => x[1] === 'lesson_start')[2]);
   assert.equal(startParams.content_slug, 'echo');
   assert.equal(startParams.location, 'teacher_share');
-  await probe.goto('https://ddirori.com/lessons/?qa=1');
+  await probe.waitForFunction(() => window.dataLayer.filter(x => x[1] === 'lesson_activity_play').length === 2);
+  const lesson = probe.locator('#rhythm');
+  await lesson.evaluate(n => { n.currentTime = n.duration - .12; });
+  await probe.waitForFunction(() => window.dataLayer.some(x => x[1] === 'lesson_activity_end'));
+  await lesson.evaluate(n => n.play());
+  await lesson.evaluate(n => { n.currentTime = n.duration - .12; });
+  await probe.waitForFunction(() => document.querySelector('#rhythm').ended);
+  assert.equal(await countEvent('lesson_activity_play'), 2);
+  assert.equal(await countEvent('lesson_activity_end'), 1);
+  const dims = await probe.evaluate(() => window.dataLayer.find(x => x[1] === 'lesson_activity_end')[2]);
+  assert.equal(dims.content_slug, 'missing-beat');
+  assert.equal(dims.difficulty, 'standard');
+
+  // Inspect script/config requests as well as the queue to catch accidental initialization.
+  const qaRequests = [];
+  const watchQa = req => { if (/analytics-config|googletagmanager/.test(req.url())) qaRequests.push(req.url()); };
+  probe.on('request', watchQa);
+  await probe.goto('https://ddirori.com/?qa=1');
+  await probe.getByRole('link', { name: '무료 5분 음악수업 열기' }).click();
   await probe.locator('#toggle-play').click();
+  await probe.waitForFunction(() => document.querySelector('#rhythm').currentTime > .1);
   assert(await probe.evaluate(() => !window.gtag));
+  assert.deepEqual(qaRequests, []);
+  probe.off('request', watchQa);
+  await probe.goto('https://ddirori.com/lessons/?qa=0');
+  await probe.waitForFunction(() => window.dataLayer?.some(x => x[1] === 'lesson_view'));
+  await probe.evaluate(async () => {
+    const {configureAnalytics} = await import('/analytics.js');
+    await Promise.all([configureAnalytics(), configureAnalytics()]);
+  });
+  assert.equal(await probe.evaluate(() => window.dataLayer.filter(x => x[0] === 'config').length), 1);
+  probe.on('request', watchQa);
   await probe.goto('https://ddirori.com/lessons/home/');
   await probe.getByRole('button', { name: '둘째' }).click();
   assert(await probe.evaluate(() => !window.gtag));
+  assert.deepEqual(qaRequests, []);
   await measured.close();
   assert.deepEqual(faults, []);
   console.log('Verified teacher and student flows at 4 widths, 3 audio levels, video, print, sharing, all free activities, acquisition events, and local files.');

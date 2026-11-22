@@ -136,24 +136,38 @@
   // Register listeners immediately so a quick play is counted even while GA loads.
   const production = ['ddirori.com', 'www.ddirori.com'].includes(location.hostname);
   const params = new URLSearchParams(location.search);
-  const analytics = production && params.get('qa') !== '1'
+  const analytics = production
     ? import('../analytics.js').then(module => { void module.configureAnalytics(); return module; }).catch(() => null)
     : null;
   function record(name, details = {}) {
     analytics?.then(module => module?.trackEvent(name, { content_type: 'free_lesson', ...details }));
   }
-  const entry = params.get('from') === 'homepage' ? 'homepage'
-    : params.get('utm_source') === 'teacher' ? 'teacher_share' : 'other';
+  const shared = params.get('utm_source') === 'teacher' && params.get('utm_medium') === 'referral';
+  const entry = shared ? 'teacher_share' : (params.get('from') === 'homepage' ? 'homepage' : 'other');
   record('lesson_view', { location: entry });
 
   const activities = [...document.querySelectorAll('audio[data-activity]')];
   const materials = [audio, video, ...activities];
-  let started = false;
+  const played = new Set();
+  const ended = new Set();
   for (const media of materials) {
+    const slug = media.dataset.activity || 'missing-beat';
+    function context() {
+      return {
+        content_slug: slug, location: entry, activity_context: media === video ? 'video' : 'audio',
+        difficulty: media === audio ? level : (media === video ? 'standard' : undefined),
+      };
+    }
     media.addEventListener('playing', () => {
-      if (started) return;
-      started = true;
-      record('lesson_start', { content_slug: media.dataset.activity || 'missing-beat', location: entry });
+      if (played.has(slug)) return;
+      if (!played.size) record('lesson_start', context());
+      played.add(slug);
+      record('lesson_activity_play', context());
+    });
+    media.addEventListener('ended', () => {
+      if (!played.has(slug) || ended.has(slug)) return;
+      ended.add(slug);
+      record('lesson_activity_end', context());
     });
   }
   // Only one teaching sound should be playing, including the short instrument demos.
