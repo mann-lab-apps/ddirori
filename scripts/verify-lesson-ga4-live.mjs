@@ -26,7 +26,7 @@ try {
       for (const line of payload.split('\n')) {
         const row = new URLSearchParams(url.search);
         for (const [key, value] of new URLSearchParams(line)) row.set(key, value);
-        if (row.has('en')) events.push({ name: row.get('en'), slug: row.get('ep.content_slug'), target: row.get('tid') });
+        if (row.has('en')) events.push({ name: row.get('en'), slug: row.get('ep.content_slug'), target: row.get('tid'), page: row.get('dl') });
       }
       return route.fulfill({ status: 204 });
     }
@@ -67,7 +67,32 @@ try {
   await page.getByRole('button', { name: '둘째' }).click();
   assert(await page.evaluate(() => !window.gtag));
   assert.equal(tags, 1);
-  console.log('PASS: production tag, five intercepted lesson events, replay deduplication, cross-page QA exclusion and student isolation.');
+  const mobile = await context.newPage();
+  await mobile.setViewportSize({ width: 390, height: 844 });
+  await mobile.emulateMedia({ reducedMotion: 'reduce' });
+  const campaignUrl = origin + '/lessons/?utm_source=youtube&utm_medium=organic_social&utm_campaign=free_lessons_echo_01#echo';
+  await mobile.goto(campaignUrl);
+  await mobile.waitForFunction(() => {
+    const audio = document.querySelector(':target audio');
+    const box = audio?.getBoundingClientRect();
+    return audio?.dataset.activity === 'echo' && audio.paused && box.top >= 0 && box.bottom <= innerHeight;
+  });
+  await mobile.waitForFunction(() => window.dataLayer?.some(args => args[1] === 'lesson_view'));
+  assert(await mobile.evaluate(() => !window.dataLayer.some(args => args[1] === 'lesson_start')));
+  const start = events.length;
+  await mobile.locator(':target audio').click({ position: { x: 25, y: 22 } });
+  await mobile.waitForFunction(() => document.querySelector(':target audio').currentTime > .15);
+  const until = Date.now() + 15000;
+  const campaignHit = () => events.slice(start).find(event => {
+    if (event.name !== 'lesson_start' || !event.page) return false;
+    const url = new URL(event.page);
+    return url.searchParams.get('utm_campaign') === 'free_lessons_echo_01'
+      && url.searchParams.get('utm_source') === 'youtube'
+      && url.searchParams.get('utm_medium') === 'organic_social';
+  });
+  while (!campaignHit() && Date.now() < until) await delay(200);
+  assert.equal(campaignHit()?.slug, 'echo', 'tagged mobile landing and first audio play');
+  console.log('PASS: production tag, lesson events, student isolation and the tagged mobile Shorts link. All collection intercepted.');
 } finally {
   await browser.close();
 }

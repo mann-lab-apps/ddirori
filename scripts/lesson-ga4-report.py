@@ -37,12 +37,14 @@ def exclude_internal(kind):
             for field, value in [("sessionMedium", "qa"), ("sessionSource", "codex_setup")]]
 
 
-def sequence_step(event, *, referral=False, channel=None):
+def sequence_step(event, *, referral=False, channel=None, campaign=None):
     fields = [{"segmentEventFilter": {"eventName": event}},
               string_filter("pageLocation", SITE if event == "first_visit" else LESSON,
                             "FULL_REGEXP", "segmentFilter"), *exclude_internal("segmentFilter")]
     if channel and event == "lesson_view":
         fields.append(string_filter("sessionSourceMedium", channel, kind="segmentFilter"))
+    if campaign and event == "lesson_view":
+        fields.append(string_filter("sessionCampaignName", campaign, kind="segmentFilter"))
     if referral:
         for pair in ["utm_source=teacher", "utm_medium=referral"]:
             fields.append(string_filter("pageLocation", "[?&]" + pair + "(&|#|$)",
@@ -55,16 +57,16 @@ def sequence_segment(name, steps):
         "sequenceScoping": "USER_CRITERIA_WITHIN_SAME_SESSION", "userSequenceSteps": steps}]}}}
 
 
-def requests_for(start, end, channel=None, activities=False):
+def requests_for(start, end, channel=None, activities=False, campaign=None):
     dates = [{"startDate": start.isoformat(), "endDate": end.isoformat()}]
-    view = sequence_step("lesson_view", channel=channel)
+    view = sequence_step("lesson_view", channel=channel, campaign=campaign)
     start_play = sequence_step("lesson_start")
     first = sequence_step("first_visit")
     # Segment membership enforces the order within one session. A closed funnel alone
     # may cross a session boundary. Count each qualified user at the chosen step.
     segments = [sequence_segment("New reached", [first, view]),
                 sequence_segment("New activated", [first, view, start_play]),
-                sequence_segment("Referral activated", [sequence_step("lesson_view", referral=True, channel=channel), start_play])]
+                sequence_segment("Referral activated", [sequence_step("lesson_view", referral=True, channel=channel, campaign=campaign), start_play])]
     steps = [{"name": label, "filterExpression": all_of([
         {"funnelEventFilter": {"eventName": event}},
         string_filter("pageLocation", LESSON, "FULL_REGEXP", "funnelFieldFilter")])}
@@ -76,6 +78,8 @@ def requests_for(start, end, channel=None, activities=False):
                   for field, values in [("hostName", HOSTS), ("pagePath", PATHS), ("eventName", events)]]
         if channel:
             fields.append(string_filter("sessionSourceMedium", channel))
+        if campaign:
+            fields.append(string_filter("sessionCampaignName", campaign))
         return {"dateRanges": dates, "dimensions": [{"name": name} for name in dimensions],
                 "metrics": [{"name": "totalUsers"}, {"name": "eventCount"}],
                 "dimensionFilter": all_of(fields + exclude_internal("filter")), "limit": "10000"}
@@ -116,7 +120,7 @@ def quality(report):
     return warnings
 
 
-def summarize(funnel, today, start, end, channel=None):
+def summarize(funnel, today, start, end, channel=None, campaign=None):
     table = funnel["funnelTable"]
     rows = rows_of(table)
     values = {}
@@ -133,7 +137,7 @@ def summarize(funnel, today, start, end, channel=None):
         warnings.append("period_not_mature")
     if (end - start).days != 6:
         warnings.append("not_a_seven_day_window")
-    usable = not warnings and not channel
+    usable = not warnings and not (channel or campaign)
     decision = "withheld"
     referral_result = "withheld"
     rate = None
@@ -173,18 +177,19 @@ def main():
     parser.add_argument("--end", required=True, type=dt.date.fromisoformat)
     parser.add_argument("--property", default=os.environ.get("DDIRORI_GA4_PROPERTY_ID"), help="GA4 numeric property ID")
     parser.add_argument("--channel", help="optional exact GA4 sessionSourceMedium, e.g. google / organic")
+    parser.add_argument("--campaign", help="optional exact GA4 sessionCampaignName, e.g. free_lessons_echo_01")
     parser.add_argument("--activities", action="store_true", help="requires the content_slug event custom dimension")
     parser.add_argument("--plan", action="store_true", help="print API requests without authenticating or sending")
     args = parser.parse_args()
     if args.start > args.end:
         parser.error("--end must be on or after --start")
-    requests = requests_for(args.start, args.end, args.channel, args.activities)
+    requests = requests_for(args.start, args.end, args.channel, args.activities, args.campaign)
     if args.plan:
         emit(requests)
         return 0
     if not args.property or not re.fullmatch(r"[1-9][0-9]*", args.property):
         parser.error("set --property to the numeric Ddirori property ID")
-    report = {"start": str(args.start), "end": str(args.end), "property": args.property, "channel": args.channel}
+    report = {"start": str(args.start), "end": str(args.end), "property": args.property, "channel": args.channel, "campaign": args.campaign}
     try:
         session = credentials()
     except Exception as error:
@@ -202,7 +207,7 @@ def main():
                 continue
             data = response.json()
             if name == "cohorts":
-                report[name] = summarize(data, dt.datetime.now(TZ).date(), args.start, args.end, args.channel)
+                report[name] = summarize(data, dt.datetime.now(TZ).date(), args.start, args.end, args.channel, args.campaign)
             else:
                 rows = rows_of(data)
                 report[name] = {"status": "ok" if rows else "no_rows", "quality": quality(data),

@@ -11,7 +11,7 @@
 | 공식 홈페이지 | 첫 화면의 무료 수업 버튼에 `?from=homepage`를 붙인다. 원래의 GA 유입 출처를 덮어쓰지 않는다. |
 | 검색 | 교사용 페이지의 canonical과 sitemap 항목은 `https://ddirori.com/lessons/`다. 검색 유입은 GA 세션 소스/매체에서 본다. |
 | 동료 추천 | 교사용 링크 복사는 기존 파라미터를 비우고 `utm_source=teacher&utm_medium=referral&utm_campaign=free_lessons`를 붙인다. 수신자의 방문과 재생을 별도로 본다. |
-| 쇼츠 프로필을 활용할 때 | [쇼츠용 링크](https://ddirori.com/lessons/?utm_source=youtube&utm_medium=organic_social&utm_campaign=free_lessons). 공개한 뒤부터 해당 채널 성과를 판단한다. |
+| 유튜브 쇼츠 프로필 | [손뼉 리듬 쇼츠와 게시 자료](lesson-shorts/README.md). 첫 편은 전용 캠페인과 4주차 위치를 붙인 링크로 연결한다. 게시 기록을 남긴 뒤부터 해당 기간을 비교한다. |
 
 [목표 모드 프롬프트, 수집 계약 및 주간 GA4 보고서 실행 방법](lesson-ga4.md)
 

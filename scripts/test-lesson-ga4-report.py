@@ -51,6 +51,21 @@ class LessonReportTest(unittest.TestCase):
         self.assertNotIn("activities", plan)
         self.assertIn("activities", api["requests_for"](START, END, activities=True))
 
+    def test_campaign_filters_visit_and_every_core_report(self):
+        campaign = "free_lessons_echo_01"
+        plan = api["requests_for"](START, END, activities=True, campaign=campaign)
+        for name in ("actions", "channels", "activities"):
+            filters = plan[name][2]["dimensionFilter"]["andGroup"]["expressions"]
+            self.assertIn(api["string_filter"]("sessionCampaignName", campaign), filters)
+        expected = api["string_filter"]("sessionCampaignName", campaign, kind="segmentFilter")
+        for segment in plan["cohorts"][2]["segments"]:
+            sequence, = segment["userSegment"]["userInclusionCriteria"]["andSequenceGroups"]
+            for step in sequence["userSequenceSteps"]:
+                filters = step["segmentFilterExpression"]["andGroup"]["expressions"]
+                self.assertEqual(expected in filters, filters[0]["segmentEventFilter"]["eventName"] == "lesson_view")
+        cohort = api["summarize"](response(), MATURE, START, END, campaign=campaign)
+        self.assertEqual((cohort["decision"], cohort["referral_result"]), ("withheld", "withheld"))
+
     def test_real_response_labels_and_rate(self):
         result = summary(response())
         self.assertEqual((result["decision"], result["start_rate"], result["referral_result"]),

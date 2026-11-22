@@ -41,6 +41,10 @@ uv run scripts/lesson-ga4-report.py --start 2026-11-23 --end 2026-11-29
 # 특정 채널의 같은 세션 획득을 같은 정의로 다시 계산
 uv run scripts/lesson-ga4-report.py --start 2026-11-23 --end 2026-11-29 --channel 'google / organic'
 
+# 정확한 세션 캠페인명까지 지정할 수 있다
+uv run scripts/lesson-ga4-report.py --property 563700721 --start 2026-11-23 --end 2026-11-29 \
+  --channel 'youtube / organic_social' --campaign free_lessons_echo_01
+
 # content_slug 맞춤 측정기준을 등록한 이후 선택 가능
 uv run scripts/lesson-ga4-report.py --start 2026-11-23 --end 2026-11-29 --activities
 ```
