@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>발끝으로 넷, 손뼉으로 리듬 | 띠로리 가정 연습</title>
+  <meta name="robots" content="noindex,follow">
+  <link rel="icon" href="../../assets/brand-icon.svg">
+  <link rel="stylesheet" href="../../theme.css"><link rel="stylesheet" href="../../styles.css">
+  <link rel="stylesheet" href="../ddirori-tokens.css">
+  <link rel="stylesheet" href="../lesson.css">
+  <script defer src="../audio/patterns.js"></script><script defer src="../lesson.js"></script>
+</head>
+<body class="ddirori" data-theme="light" data-lesson="home">
+  <header class="lesson-head"><div class="shell mast"><img src="../../assets/wordmark.svg" width="72" height="28" alt="띠로리"><span class="collection-name">가정 연습</span></div></header>
+  <main class="home-practice shell">
+    <p class="lesson-meta">쉼표 듣기 · 혼자 하는 연습</p><h1>어느 박에서<br>건반이 쉴까요?</h1>
+    <p class="intro-copy">발끝으로 하나, 둘, 셋, 넷. 톡 소리에 맞춰 세면서 건반 소리만 쏙 빠진 박을 찾아요.</p>
+    <section class="player" aria-label="가정 연습 문제">
+      <div class="player-top"><h2>듣고 골라요</h2><span>80 BPM</span></div>
+      <p class="player-tip">준비 박자 네 번 뒤에 문제가 두 번 들려요.</p>
+      <div class="transport" hidden>
+          <button type="button" class="play-button" id="toggle-play"><span class="play-symbol" aria-hidden="true"></span><span id="play-label">리듬 재생</span></button>
+          <span id="phase"></span>
+        </div>
+        <details class="native-transport" open><summary>재생 위치와 음량</summary><audio id="rhythm" controls preload="metadata" src="../audio/easy.wav" aria-label="가정 연습 리듬"></audio></details>
+      <p class="audio-error" hidden>소리를 열지 못했어요. <a href="../audio/easy.wav" id="audio-file">음원 파일 열기</a></p>
+      <p class="choose-label">건반이 쉰 박을 눌러요.</p>
+      <div class="choices" role="group" aria-label="건반이 쉰 박 고르기">
+        <button type="button" value="1">첫째</button><button type="button" value="2">둘째</button><button type="button" value="3">셋째</button><button type="button" value="4">넷째</button>
+      </div>
+      <div class="feedback-row"><img id="bach-response" src="../../assets/bach-happy.svg" alt="" width="64" height="64" hidden><p class="home-feedback" role="status" id="choice-result"></p></div>
+    </section>
+    <section class="home-finish"><h2>이제 내가 내는 문제</h2><p>다른 한 박을 골라 속으로만 세고, 나머지 세 박에는 손뼉을 쳐요. 가족에게 어느 박이 쉬었는지 물어보세요.</p></section>
+  </main>
+</body></html>

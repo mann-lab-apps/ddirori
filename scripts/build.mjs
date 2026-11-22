@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import { buildLessonAudio } from './build-lesson-audio.mjs';
 import path from 'node:path';
 
 const root=path.resolve(import.meta.dirname,'..');
@@ -35,6 +36,11 @@ function rewrite(html,name){
 }
 fs.rmSync(dist,{recursive:true,force:true});
 fs.cpSync(source,dist,{recursive:true});
+buildLessonAudio(path.join(dist,'lessons'));
+if (base) {
+  const lesson = path.join(dist, 'lessons/index.html');
+  fs.writeFileSync(lesson, fs.readFileSync(lesson, 'utf8').replace('<head>', '<head>\n  <meta name="robots" content="noindex,nofollow">'));
+}
 for(const name of routes){
   const file=path.join(source,name+'.html');
   const html=rewrite(fs.readFileSync(file,'utf8'),name);
@@ -53,5 +59,5 @@ const privacyHtml=fs.readFileSync(privacy,'utf8').replaceAll('분석 상태: 설
 fs.writeFileSync(privacy,privacyHtml);fs.writeFileSync(path.join(dist,'privacy.html'),privacyHtml);
 fs.writeFileSync(path.join(dist,'.nojekyll'),'');
 fs.writeFileSync(path.join(dist,'robots.txt'),`User-agent: *\n${base?'Disallow: /':'Allow: /'}\nSitemap: https://ddirori.com/sitemap.xml\n`);
-fs.writeFileSync(path.join(dist,'sitemap.xml'),'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+routes.map(name=>`  <url><loc>https://ddirori.com${name==='index'?'/':'/'+routePath(name)+'/'}</loc></url>`).join('\n')+'\n</urlset>\n');
+fs.writeFileSync(path.join(dist,'sitemap.xml'),'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+[...routes, 'lessons'].map(name=>`  <url><loc>https://ddirori.com${name==='index'?'/':'/'+routePath(name)+'/'}</loc></url>`).join('\n')+'\n</urlset>\n');
 console.log(`Built ${routes.length} pages; base=${base||'/'}; GA=${measurementId?'configured':'disabled (new stream pending)'}`);

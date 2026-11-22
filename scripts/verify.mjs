@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import { verifyLessonAudio } from './verify-lesson-audio.mjs';
 const root=path.resolve(import.meta.dirname,'..');const dist=path.join(root,'dist');
 let checked=0;
 const index=fs.readFileSync(path.join(dist,'index.html'),'utf8');
@@ -56,4 +57,16 @@ for(const image of JSON.parse(fs.readFileSync(path.join(dist,'assets/sources.jso
  assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.join(dist,'assets',image.asset))).digest('hex'),image.sha256);
 }
 const manifest=JSON.parse(fs.readFileSync(path.join(dist,'download-manifest.json'),'utf8'));assert.equal(manifest.version,'0.1.0-alpha.38');
-console.log(`Verified 6 pages, ${checked} local references, 3 store CTAs, screenshot hashes and GA configuration`);
+const lessons = fs.readFileSync(path.join(dist, 'lessons/index.html'), 'utf8');
+assert(lessons.includes('href="https://ddirori.com/lessons/"'));
+assert.equal(lessons.includes('name="robots" content="noindex,nofollow"'), Boolean(base));
+assert(fs.readFileSync(path.join(dist, 'sitemap.xml'), 'utf8').includes('<loc>https://ddirori.com/lessons/</loc>'));
+assert(!/29,000원|구매 관심|판매 준비/.test(lessons));
+for (const activity of ['dynamics', 'melody', 'echo']) {
+  assert(lessons.includes('data-activity="' + activity + '"'));
+  assert(fs.statSync(path.join(dist, 'lessons/audio', activity + '.wav')).size > 44);
+}
+assert(fs.existsSync(path.join(dist, 'lessons/share.jpg')));
+assert(fs.existsSync(path.join(dist, 'lessons/home/index.html')));
+verifyLessonAudio(dist);
+console.log(`Verified 3 lesson tracks, 6 pages, ${checked} local references, 3 store CTAs, screenshot hashes and GA configuration`);
