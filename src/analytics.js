@@ -144,7 +144,21 @@ export const trackEvent = (name, params = {}) => {
   })
 }
 
+const trackLink = ({ dataset, href, textContent }) => {
+  trackEvent(dataset.trackEvent, {
+    link_url: href,
+    link_text: textContent?.trim(),
+    location: dataset.trackLocation,
+    platform: dataset.trackPlatform,
+    file_name: dataset.trackFile,
+    release_version: dataset.trackVersion,
+    content_type: dataset.trackContentType,
+    content_slug: dataset.trackContentSlug
+  })
+}
+
 export const bindTrackedLinks = () => {
+  const earlyDownloads = window.takeEarlyStudioDownloadClicks?.() ?? []
   document.addEventListener('click', (event) => {
     if (!(event.target instanceof Element)) {
       return
@@ -156,17 +170,9 @@ export const bindTrackedLinks = () => {
       return
     }
 
-    trackEvent(link.dataset.trackEvent, {
-      link_url: link.href,
-      link_text: link.textContent?.trim(),
-      location: link.dataset.trackLocation,
-      platform: link.dataset.trackPlatform,
-      file_name: link.dataset.trackFile,
-      release_version: link.dataset.trackVersion,
-      content_type: link.dataset.trackContentType,
-      content_slug: link.dataset.trackContentSlug
-    })
+    trackLink(link)
   })
+  for (const link of earlyDownloads) trackLink(link)
 }
 
 export const createReadCompletionTracker = () => {
