@@ -4,7 +4,10 @@ if(['ddirori.com','www.ddirori.com'].includes(location.hostname)){
   void import('./analytics.js').then(({bindTrackedLinks,configureAnalytics})=>{
     bindTrackedLinks();
     void configureAnalytics();
-  }).catch(()=>{/* Measurement failure must not affect the page or store links. */});
+  }).catch(()=>{
+    // Stop buffering if analytics cannot load, without affecting the links.
+    window.takeEarlyStudioDownloadClicks?.();
+  });
 }
 const header=document.querySelector('.site-header');
 const toggle=document.querySelector('.mobile-toggle');
