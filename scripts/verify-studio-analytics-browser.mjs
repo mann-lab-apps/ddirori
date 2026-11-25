@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
+import { createServer } from 'node:http';
 import { createRequire } from 'node:module';
+import { setTimeout as delay } from 'node:timers/promises';
 
 const { chromium, devices } = createRequire(import.meta.url)(process.env.DDIRORI_PLAYWRIGHT ?? 'playwright');
 const base = new URL(process.env.DDIRORI_LANDING_URL ?? 'http://127.0.0.1:8110/');
@@ -15,7 +17,7 @@ const mobile = devices['iPhone 13'];
 const desktop = devices['Desktop Chrome'];
 
 async function exercise(title, options, test) {
-  const { device = desktop, hold = [], fail, replaceDocument = false, javaScriptEnabled = true } = options;
+  const { device = desktop, hold = [], fail, replaceDocument = false, javaScriptEnabled = true, attachmentOrigin } = options;
   const page = await browser.newPage({ ...device, javaScriptEnabled });
   page.setDefaultTimeout(12000);
   const gates = new Map(hold.map(file => [file, Promise.withResolvers()]));
@@ -25,6 +27,7 @@ async function exercise(title, options, test) {
   try {
     await page.route('**/*', async route => {
       const url = new URL(route.request().url());
+      if (url.origin === attachmentOrigin) return route.continue();
       if (url.origin === origin) {
         await gates.get(url.pathname)?.promise;
         if (url.pathname === fail) {
@@ -86,7 +89,69 @@ async function activateInstaller(page, link, id, key = false) {
   await download.delete();
 }
 
+async function verifyModifiedClicks() {
+  const received = [];
+  // Chromium's background download can bypass Playwright's request routes.
+  const server = createServer((request, response) => {
+    received.push(request.url);
+    if (request.url.startsWith('/start/')) {
+      response.writeHead(302, { Location: request.url.replace('/start/', '/file/') });
+      response.end();
+      return;
+    }
+    response.writeHead(200, {
+      'Content-Type': 'application/octet-stream',
+      'Content-Disposition': 'attachment; filename="installer-fixture.bin"'
+    });
+    response.end('isolated installer');
+  });
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  const attachmentOrigin = `http://127.0.0.1:${server.address().port}`;
+  const files = id => received.filter(url => url.endsWith(`/${id}`));
+  async function activate(link, id, gesture) {
+    const target = `${attachmentOrigin}/start/${id}`;
+    await link.evaluate((anchor, href) => { anchor.href = href; }, target);
+    await link.click(gesture);
+    const deadline = Date.now() + 5000;
+    while (files(id).length < 2 && Date.now() < deadline) await delay(25);
+    assert.deepEqual(files(id), [`/start/${id}`, `/file/${id}`]);
+    return target;
+  }
+  try {
+    await exercise('middle and modifier click each track one attachment before and after module load',
+      { hold: ['/analytics.js'], attachmentOrigin }, async ({ page, release }) => {
+        await open(page);
+        const earlyLink = platformLink(page, 'windows');
+        const earlyTarget = await activate(earlyLink, 'early', { button: 'middle' });
+        assert.deepEqual(await events(page), []);
+        release('/analytics.js');
+        await configured(page);
+        const early = { ...expected('download_platform', 'windows'), url: earlyTarget };
+        assert.deepEqual(await events(page), [early]);
+
+        await select(page, 'macos');
+        const link = primaryLink(page);
+        const middleUrl = await activate(link, 'ready', { button: 'middle' });
+        const modifiedUrl = await activate(link, 'modifier', { modifiers: ['ControlOrMeta'] });
+        const tracked = [
+          early, { ...expected('download_primary', 'macos'), url: middleUrl },
+          { ...expected('download_primary', 'macos'), url: modifiedUrl },
+        ];
+        assert.deepEqual(await events(page), tracked);
+        await link.click({ button: 'right' });
+        if (process.platform === 'darwin') await link.click({ modifiers: ['Control'] });
+        assert.deepEqual(await events(page), tracked);
+        assert.deepEqual(files('modifier'), ['/start/modifier', '/file/modifier']);
+        assert.equal(new URL(page.url()).origin, origin);
+      });
+  } finally {
+    await new Promise((resolve, reject) => server.close(error => error ? reject(error) : resolve()));
+  }
+}
+
 try {
+  await verifyModifiedClicks();
+
   await exercise('iPhone attachment before analytics loads', { device: mobile, hold: ['/analytics.js'] },
     async ({ page, requests, release }) => {
       await open(page);

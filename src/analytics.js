@@ -159,7 +159,7 @@ const trackLink = ({ dataset, href, textContent }) => {
 
 export const bindTrackedLinks = () => {
   const earlyDownloads = window.takeEarlyStudioDownloadClicks?.() ?? []
-  document.addEventListener('click', (event) => {
+  const trackLinkClick = (event) => {
     if (!(event.target instanceof Element)) {
       return
     }
@@ -170,8 +170,16 @@ export const bindTrackedLinks = () => {
       return
     }
 
+    if (event.type === 'auxclick' && (
+      event.button !== 1 ||
+      !link.closest('[data-download-panel]') ||
+      !['download_primary', 'download_platform'].includes(link.dataset.trackEvent)
+    )) return
+
     trackLink(link)
-  })
+  }
+  document.addEventListener('click', trackLinkClick)
+  document.addEventListener('auxclick', trackLinkClick)
   for (const link of earlyDownloads) trackLink(link)
 }
 
