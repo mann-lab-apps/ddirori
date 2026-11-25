@@ -4,6 +4,7 @@
   if (['ddirori.com', 'www.ddirori.com'].includes(location.hostname)) {
     const pending = [];
     const captureDownload = event => {
+      if (event.type === 'auxclick' && event.button !== 1) return;
       if (!(event.target instanceof Element) || pending.length >= 25) return;
       const link = event.target.closest('[data-download-panel] a[data-track-event]');
       if (!link) return;
@@ -16,8 +17,10 @@
       });
     };
     document.addEventListener('click', captureDownload);
+    document.addEventListener('auxclick', captureDownload);
     window.takeEarlyStudioDownloadClicks = () => {
       document.removeEventListener('click', captureDownload);
+      document.removeEventListener('auxclick', captureDownload);
       delete window.takeEarlyStudioDownloadClicks;
       return pending.splice(0);
     };
