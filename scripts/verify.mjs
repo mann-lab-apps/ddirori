@@ -73,6 +73,9 @@ for(const item of manifest.downloads){
  assert(link.includes(`data-track-file="${item.fileName}"`)&&link.includes(`data-track-version="${manifest.version}"`));
 }
 assert(studio.includes('id="musicxml"')&&studio.includes('href="#download">Studio 설치 파일 보기</a>'));
+const sharing=studio.match(/<section id="sharing"[\s\S]*?<\/section>/)?.[0]??'';
+assert(sharing.includes('href="https://in-c.mannlab.app/studio/part-pdf.html"'),
+  'Studio sharing section links directly to the part PDF guide');
 const sitemap=fs.readFileSync(path.join(dist,'sitemap.xml'),'utf8');
 assert(sitemap.includes('<loc>https://ddirori.com/studio/</loc>'));
 const lessons = fs.readFileSync(path.join(dist, 'lessons/index.html'), 'utf8');
