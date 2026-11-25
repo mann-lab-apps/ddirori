@@ -14,8 +14,10 @@
 ## 7일·28일 리뷰
 
 - Pages 배포 일시와 공개 소스 SHA를 기록하고 KST 배포일로부터 7일·28일에 판독한다. 날짜 단위 비교는 배포 다음 날부터의 완전히 지난 날을 사용한다. 집계가 지연되면 기준 날짜와 실제 조회 날짜를 함께 적는다.
-- GA4 속성 `563700721`의 Core 보고서에서 `hostName`이 `ddirori.com` 또는 `www.ddirori.com`이고 `pagePath`가 `/studio/` 또는 `/studio.html`인 조회를 사용한다. 내부 검증 세션은 `sessionCampaignName`이 `studio_release_validation_`로 시작하는 행을 제외한다.
-- 분모는 `eventName=page_view`에서 조회한 `sessions`다. 분자는 같은 기간·페이지 필터에 `eventName IN (download_primary, download_platform)`을 적용해 **이벤트 이름으로 분할하지 않은** `sessions`다. 세션 개수 합산으로 분자를 구하면 두 버튼을 누른 한 세션이 중복된다. 처음에는 분자·분모와 관측 기간을 함께 제시한다. 행 누락이나 권한 오류는 미확인으로 남긴다.
+- GA4 속성 `563700721`의 Core 보고서에서 `hostName`은 `ddirori.com`과 `www.ddirori.com`을 포함한다. `pagePath`는 공개 Studio 페이지가 열리는 `/studio/`, `/studio`, `/studio.html`, `/studio/index.html`, `/studio/index`를 포함한다. `sessionCampaignName`이 `studio_release_validation_`로 시작하는 내부 검증 세션을 제외한다.
+- Core 보고서에서 같은 기간과 페이지 필터로 `page_view` 세션과 설치 클릭 세션을 각각 조회한다. 클릭 세션은 `eventName IN (download_primary, download_platform)`의 단일 집계로 읽는다. 이벤트별 세션 수를 합산하면 두 버튼을 누른 세션이 중복된다.
+- 설치 전환율의 분모는 Studio 페이지뷰가 있는 세션이고 분자는 그중 설치 클릭이 있는 세션이다. 두 이벤트가 모두 있는 세션을 확인하려면 GA4 탐색에서 동일한 페이지·기간·QA 제외 조건으로 세션 세그먼트 두 개를 만든다. 하나는 Studio 방문 세션, 다른 하나는 같은 세션에 설치 클릭 조건을 추가한 세션이다. 각 `Sessions`와 기간을 함께 보고한다. Core 집계만 확보한 경우에는 방문과 클릭 세션 수를 각각 보고한다. [세그먼트 조건 범위](https://support.google.com/analytics/answer/9304353)
+- 새 가이드 유입은 `sessionManualCampaignName=studio_guides`와 `sessionManualAdContent`로 읽는다. 이미 열린 세션이 가이드에서 Studio로 돌아오는 경로는 가이드별 태그가 포함된 `pageLocation`으로 별도 조회한다. 보고서에 행이 없으면 집계 상태와 조회 시각을 남긴다.
 - 반복 클릭은 동일 범위의 `eventCount`를 이벤트별로 확인한다. GitHub의 파일별 `download_count`는 같은 자산 ID로 배포 스냅샷과 비교한다. 설치 완료 건수는 이 두 보고서의 범위 밖이다.
 - [MusicXML 예제](https://ddirori.com/studio/#musicxml)로 유입 경로를 확인한다. 검색 콘솔의 색인·선택 canonical·노출·클릭은 읽기 권한이 있는 속성에서 기록한다. 공식 설치 파일과 지원 OS, MusicXML에서 PDF로 저장하는 방법을 같은 한국어 질문으로 점검하고 AI 답변을 직접 조회한 경우 인용 URL을 남긴다.
 
