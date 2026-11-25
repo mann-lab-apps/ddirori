@@ -24,37 +24,73 @@ document.querySelector('[data-copy-email]').addEventListener('click',async()=>{c
 const panel=document.querySelector('[data-download-panel]');
 if(panel){
   const status=panel.querySelector('[data-download-status]');
+  const tabs=panel.querySelector('.platform-tabs');
+  const version=panel.querySelector('[data-version]');
+  const name=panel.querySelector('[data-download-name]');
+  const meta=panel.querySelector('[data-download-meta]');
+  const signing=panel.querySelector('[data-signing]');
+  const mobileNote=panel.querySelector('[data-mobile-note]');
+  const platform=navigator.userAgentData?.platform??navigator.platform;
+  const mobile=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)
+    || (/^Mac/i.test(platform)&&navigator.maxTouchPoints>1);
+  const desktopPlatform=mobile||/CrOS/i.test(navigator.userAgent)?null:
+    /^Win/i.test(platform)?'windows':
+    /^Mac/i.test(platform)?'macos':
+    /^Linux/i.test(platform)?'linux':null;
+  mobileNote.hidden=!!desktopPlatform;
+
   const safeUrl=value=>{try{const url=new URL(value);return url.protocol==='https:'?url.href:null;}catch{return null;}};
   try{
     const source=new URL(config?.downloadManifest??'download-manifest.json',import.meta.url);
     if(source.origin!==location.origin)throw Error('Download manifest must be served from this site');
-    const response=await fetch(source);if(!response.ok)throw Error('Download manifest unavailable');const manifest=await response.json();
+    const response=await fetch(source);if(!response.ok)throw Error('Download manifest unavailable');
+    const manifest=await response.json();
     if(!Array.isArray(manifest.downloads)||typeof manifest.version!=='string')throw Error('Invalid download manifest');
-    const releaseUrl=safeUrl(manifest.releaseUrl);const checksumUrl=safeUrl(manifest.checksumsUrl);
-    const releaseLink=panel.querySelector('[data-release-link]');const checksumLink=panel.querySelector('[data-checksum-link]');
-    if(releaseUrl)releaseLink.href=releaseUrl;else releaseLink.hidden=true;
-    if(checksumUrl)checksumLink.href=checksumUrl;else checksumLink.hidden=true;
+
+    const buttons=[...tabs.querySelectorAll('[data-platform]')];
     function selectPlatform(id){
-      const item=manifest.downloads.find(download=>download.id===id);if(!item)return;
-      panel.querySelectorAll('[data-platform]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.platform===id)));
-      const available=item.available===true&&manifest.releasePublished===true&&safeUrl(item.url);
-      panel.querySelector('[data-version]').textContent=`기존 공개 빌드 · ${manifest.version}`;
-      panel.querySelector('[data-download-name]').textContent=available?`${item.platform} 다운로드`:`${item.platform} 공개 준비 중`;
-      panel.querySelector('[data-download-meta]').textContent=available?`${item.architecture} · ${item.format} · ${item.size}`:'현재 제공하는 설치 파일이 없어요.';
+      const item=manifest.downloads.find(download=>download.id===id);
+      if(!item)return;
+      buttons.forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.platform===id)));
+      const url=item.available===true&&manifest.releasePublished===true?safeUrl(item.url):null;
+      version.textContent=`공개 프리릴리즈 · ${manifest.version}`;
+      name.textContent=url?`${item.platform} 다운로드`:`${item.platform} 공개 준비 중`;
+      meta.hidden=false;
+      meta.textContent=url?`${item.architecture} · ${item.format} · ${item.size}`:'현재 제공하는 설치 파일이 없어요.';
       let link=panel.querySelector('[data-download-link]');
-      // Use a real disabled button when an installer is unavailable, never an empty link.
-      if(available){if(link.tagName!=='A'){const anchor=document.createElement('a');anchor.className=link.className;anchor.dataset.downloadLink='';link.replaceWith(anchor);link=anchor;}link.removeAttribute('aria-disabled');link.href=safeUrl(item.url);link.textContent='설치 파일 받기 ↓';}
-      else{if(link.tagName!=='BUTTON'){const button=document.createElement('button');button.className=link.className;button.dataset.downloadLink='';button.type='button';link.replaceWith(button);link=button;}link.disabled=true;link.textContent='아직 준비 중이에요';}
-      panel.querySelector('[data-signing]').textContent=manifest.signing?.[item.platform]??'';
-      status.textContent=`${item.platform} 선택 · ${available?'설치 파일을 받을 수 있어요.':'다른 운영체제를 선택해 주세요.'}`;
+      const tag=url?'a':'button';
+      if(link.localName!==tag){
+        const replacement=document.createElement(tag);
+        replacement.className=link.className;
+        replacement.dataset.downloadLink='';
+        link.replaceWith(replacement);
+        link=replacement;
+      }
+      if(url){
+        link.href=url;
+        link.textContent='설치 파일 받기 ↓';
+        link.dataset.trackEvent='download_primary';
+        link.dataset.trackLocation='studio_primary';
+        link.dataset.trackPlatform=id;
+        link.dataset.trackFile=item.fileName;
+        link.dataset.trackVersion=manifest.version;
+      }else{
+        link.type='button';
+        link.disabled=true;
+        link.textContent='아직 준비 중이에요';
+      }
+      signing.textContent=manifest.signing?.[item.platform]??'';
+      signing.hidden=!signing.textContent;
+      status.textContent=`${item.platform} 선택 · ${url?'설치 파일을 받을 수 있어요.':'다른 운영체제를 선택해 주세요.'}`;
     }
-    panel.querySelectorAll('[data-platform]').forEach(button=>{button.addEventListener('click',()=>selectPlatform(button.dataset.platform));button.disabled=false;});
-    const ua=navigator.userAgentData?.platform??navigator.platform??'';
-    const initial=/Win/i.test(ua)?'windows':/Linux/i.test(ua)&&!/Android/i.test(navigator.userAgent)?'linux':'macos';
-    selectPlatform(initial);
-    panel.querySelector('[data-mobile-note]').hidden=!/iPhone|iPad|Android/i.test(navigator.userAgent);
+    buttons.forEach(button=>{
+      const id=button.dataset.platform;
+      button.disabled=!manifest.downloads.some(download=>download.id===id);
+      button.addEventListener('click',()=>selectPlatform(id));
+    });
+    tabs.hidden=false;
+    if(desktopPlatform)selectPlatform(desktopPlatform);
   }catch{
-    // Fail closed: a stale fallback must not masquerade as a checked current installer.
-    const link=panel.querySelector('[data-download-link]');const button=document.createElement('button');button.type='button';button.disabled=true;button.className=link.className;button.dataset.downloadLink='';button.textContent='배포 정보를 확인해 주세요';link.replaceWith(button);status.textContent='다운로드 정보를 불러오지 못했어요. 배포 기록에서 설치 파일을 확인해 주세요.';
+    status.textContent='다운로드 정보를 불러오지 못했어요. 표시된 프리릴리즈 파일은 운영체제별 목록에서 받을 수 있어요.';
   }
 }
