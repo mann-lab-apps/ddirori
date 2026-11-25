@@ -40,6 +40,7 @@ const allowedEventParams = new Set([
   'platform',
   'poster_status',
   'recital_status',
+  'release_version',
   'reading_minutes',
   'role'
 ])
@@ -161,6 +162,7 @@ export const bindTrackedLinks = () => {
       location: link.dataset.trackLocation,
       platform: link.dataset.trackPlatform,
       file_name: link.dataset.trackFile,
+      release_version: link.dataset.trackVersion,
       content_type: link.dataset.trackContentType,
       content_slug: link.dataset.trackContentSlug
     })
