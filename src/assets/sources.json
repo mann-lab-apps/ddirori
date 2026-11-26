@@ -118,5 +118,23 @@
     "version": "1.1.0",
     "retrievedOn": "2026-11-26",
     "sha256": "075711343c38ae610aed0e1c1753875c5432c59fd67d362be8dc24f9fbc776dd"
+  },
+  {
+    "asset": "score-guide-ipad-library.jpg",
+    "source": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/92/c3/f4/92c3f404-a805-5969-c0eb-e07f2e1cb8c1/ddirori-score-ipad-1-library.jpg/1200x1200bb.jpg",
+    "kind": "Unchanged iPad screenshot from the public Korean App Store listing",
+    "appId": 6808164371,
+    "version": "1.1.0",
+    "retrievedOn": "2026-11-26",
+    "sha256": "2f8259d56ed86cd5a2982a8bd65a7b69cec5124e4ba9d5f74f7c76741d6c17a2"
+  },
+  {
+    "asset": "score-guide-ipad-annotation.jpg",
+    "source": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/33/13/9b/33139b36-4a13-37ae-8796-e0aad2381cd8/ddirori-score-ipad-2-annotation.jpg/1200x1200bb.jpg",
+    "kind": "Unchanged iPad screenshot from the public Korean App Store listing",
+    "appId": 6808164371,
+    "version": "1.1.0",
+    "retrievedOn": "2026-11-26",
+    "sha256": "4d571dc43e8591532003390128d16024a579584af79775f611c8a81c1dace618"
   }
 ]

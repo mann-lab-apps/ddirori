@@ -20,3 +20,18 @@ figure{margin:0}
 .score-download>.caption{margin-top:16px}
 .score-download>.text-link{margin-top:24px;display:inline-block}
 @media(max-width:760px){.score-public-hero{padding:24px 16px 20px}.score-public-hero>img{width:218px}.score-workflow{grid-template-columns:1fr;gap:30px}.score-workflow h3{font-size:22px}.score-public-detail>img{width:210px}.score-scene-label{font-size:14px}}
+
+.score-guide{padding-block:clamp(40px,7vw,100px)}
+.score-guide-intro{max-width:750px;margin-bottom:clamp(36px,7vw,80px)}
+.score-guide-intro h1{font-size:clamp(34px,5vw,60px);line-height:1.14;margin-block:18px}
+.score-guide-intro .caption{margin-top:18px}
+.score-guide-step{gap:clamp(24px,6vw,72px);align-items:start;border-top:1px solid var(--border);padding-block:clamp(30px,5vw,66px)}
+.score-guide h2{font-size:clamp(24px,3.6vw,40px);line-height:1.25}
+.score-guide-copy ol{margin:20px 0 0;padding-inline-start:1.4em;font-size:17px;line-height:1.8}
+.score-guide-copy li+li{margin-top:12px}
+.score-guide-step figure{min-width:0;padding:clamp(10px,2vw,22px);border-radius:20px;background:var(--surface-muted)}
+.score-guide-step img{width:100%;height:auto;border-radius:10px}
+.score-guide-step figcaption{margin-top:12px;color:var(--muted);font-size:14px}
+.score-guide-finish{border-top:1px solid var(--border);padding-top:clamp(30px,5vw,66px)}
+.score-guide-finish .actions{gap:16px 24px;margin-top:22px;align-items:center}
+.score-guide-link{display:inline-block;margin-top:26px}

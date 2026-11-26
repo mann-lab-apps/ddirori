@@ -8,7 +8,8 @@ const base=process.env.DDIRORI_LANDING_URL??'http://127.0.0.1:8110/';
 const out=path.resolve(process.env.DDIRORI_LANDING_EVIDENCE??'out/ddirori-landing-review');
 fs.mkdirSync(out,{recursive:true});
 const browser=await chromium.launch({headless:true,...(process.env.DDIRORI_BROWSER?{executablePath:process.env.DDIRORI_BROWSER}:{})});
-const pages=['index','studio','score','play','support','privacy'];
+const scoreGuidePath='score/guides/ipad-pdf/';
+const pages=['index','studio','score','score-ipad-pdf','play','support','privacy'];
 const studioManifest=await fetch(new URL('download-manifest.json',base)).then(response=>response.json());
 const studioDownloads=Object.fromEntries(studioManifest.downloads.map(item=>[item.id,item]));
 const expectedMeasurementId=process.env.GA4_MEASUREMENT_ID??'G-DDIRORIQA';
@@ -21,7 +22,7 @@ try{
  page.on('response',r=>{if(r.status()>=400&&!r.url().endsWith('favicon.ico'))result.errors.push(`${r.status()} ${r.url()}`);});
  for(const name of pages)for(const width of [320,390,768,1440]){
   await page.setViewportSize({width,height:1000});
-  await page.goto(new URL(name+'.html',base).href);
+  await page.goto(new URL(name==='score-ipad-pdf'?scoreGuidePath:name+'.html',base).href);
   await page.evaluate(()=>document.fonts.ready);
   await page.evaluate(()=>Promise.all([...document.images].map(image=>{image.loading='eager';return image.decode().catch(()=>{});})));
   const id=`${name}-${width}`;
@@ -32,7 +33,7 @@ try{
   check(`${id} only active apps in service menu`,await page.locator('.service-dropdown a').count()===3);
   check(`${id} no deferred-service routes`,await page.locator('a[href*="stage.html"],a[href*="talk.html"],a[href*="practice.html"]').count()===0);
   result.layouts.push(id);
-  if([390,1440].includes(width)&&['index','studio','score','play'].includes(name))await page.screenshot({path:path.join(out,id+'.png'),fullPage:true});
+  if([390,1440].includes(width)&&['index','studio','score','score-ipad-pdf','play'].includes(name))await page.screenshot({path:path.join(out,id+'.png'),fullPage:true});
  }
  await page.setViewportSize({width:390,height:844});await page.goto(base);
  const menu=page.locator('.mobile-toggle');await menu.click();
@@ -81,6 +82,18 @@ try{
  check('Score rename FAQ opens',await page.locator('.faq details').first().getAttribute('open')!==null);
  await page.emulateMedia({reducedMotion:'reduce'});
  check('reduced motion disables smooth scrolling',await page.locator('html').evaluate(n=>getComputedStyle(n).scrollBehavior==='auto'));
+ const ipadGuide=page.getByRole('link',{name:'아이패드에서 PDF 악보를 열고 필기하는 방법'});
+ await ipadGuide.focus();
+ await page.keyboard.press('Enter');
+ await page.waitForURL(new URL(scoreGuidePath,base).href);
+ check('Score practice guide opens from the keyboard without an internal campaign',new URL(page.url()).search==='');
+ const guideImages=page.locator('.score-guide img');
+ await guideImages.evaluateAll(images=>Promise.all(images.map(image=>image.decode())));
+ check('Guide renders the two original iPad screenshots',await guideImages.count()===2&&await guideImages.evaluateAll(images=>images.every(image=>image.naturalWidth===900&&image.naturalHeight===1200)));
+ check('Guide links to the current Score app',(await page.locator('[data-track-location="guide"]').getAttribute('href'))==='https://apps.apple.com/kr/app/id6808164371');
+ await page.getByRole('link',{name:'악보에서 쓰는 연습 도구 보기'}).click();
+ await page.waitForURL(new URL('score/#practice-tools',base).href);
+ check('Guide leads back to the Score practice tools',await page.locator('#practice-tools').isVisible());
  const guide=page.getByRole('link',{name:'MusicXML 예제',exact:true});
  await page.goto(new URL('studio/',base).href);
  await guide.click();
@@ -106,6 +119,9 @@ try{
  check('no-JS visitors can access all service links',await noJs.locator('.footer-links').getByRole('link',{name:/^띠로리 (스튜디오|스코어|플레이)$/}).count()===3);
  await noJs.goto(new URL('score.html#android-test',base).href);
  check('Android applicants can read the address without a mail handler or JavaScript',await noJs.locator('#android-test-email').isVisible());
+ await noJs.getByRole('link',{name:'아이패드에서 PDF 악보를 열고 필기하는 방법'}).click();
+ await noJs.waitForURL(new URL(scoreGuidePath,base).href);
+ check('Guide directions and install link work without JavaScript',await noJs.locator('#import-pdf').isVisible()&&await noJs.locator('#annotate-pdf').isVisible()&&await noJs.locator('[data-track-location="guide"]').isVisible());
  // Exercise the real production-host gate without sending any QA hits to Google.
  const measured=await browser.newPage();
  await measured.route('https://ddirori.com/**',async route=>{
@@ -125,6 +141,14 @@ try{
  await measured.evaluate(()=>document.addEventListener('click',event=>{if(event.target.closest('a[href*="apps.apple.com"]'))event.preventDefault();}));
  await measured.locator('.score-hero a[data-track-event]').click();
  check('one store click sends one event with its position',await measured.evaluate(()=>{const events=window.dataLayer.filter(args=>args[0]==='event'&&args[1]==='score_store_click');return events.length===1&&events[0][2].location==='hero'&&events[0][2].content_type==='score'&&events[0][2].app_name==='Ddirori'&&events[0][2].link_url.endsWith('/id6808164371');}));
+ await measured.goto(new URL(scoreGuidePath,'https://ddirori.com/').href);
+ await measured.waitForFunction(()=>window.dataLayer?.some(args=>args[0]==='config'));
+ await measured.evaluate(()=>document.addEventListener('click',event=>{if(event.target.closest('a[href*="apps.apple.com"]'))event.preventDefault();}));
+ await measured.locator('[data-track-location="guide"]').click();
+ check('Guide uses the existing Score store click with its own location',await measured.evaluate(()=>{
+   const events=window.dataLayer.filter(args=>args[0]==='event'&&args[1]==='score_store_click');
+   return events.length===1&&events[0][2].location==='guide'&&events[0][2].content_type==='score'&&events[0][2].link_url==='https://apps.apple.com/kr/app/id6808164371';
+ }));
  await measured.goto('https://ddirori.com/?utm_source=qa&utm_medium=test&utm_campaign=studio_discovery');
  await measured.locator('.hero-home-actions a[href$="/studio/#download"]').click();
  await measured.waitForURL('https://ddirori.com/studio/#download');
