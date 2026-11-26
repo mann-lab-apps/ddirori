@@ -22,7 +22,7 @@ main push는 GitHub Actions에서 검사 후 GitHub Pages로 배포합니다. Pa
 
 ## 검색 정보와 웹 글꼴
 
-Score의 검색 제목·설명·앱 구조화 데이터는 `src/score.html`에서 함께 관리합니다. 공개 앱 이름은 현재 `Clef & Staff`, 새 이름은 `띠로리 스코어`입니다. 가격·지원 기기 등은 공개 App Store 정보와 본문에 맞춥니다. 홈페이지의 Naver 소유확인 태그는 유지합니다.
+Score의 검색 제목·설명·앱 구조화 데이터는 `src/score.html`에서 함께 관리합니다. 공개 앱 이름은 `띠로리 스코어`이며 이전 이름은 `Clef & Staff`입니다. 가격·지원 기기 등은 공개 App Store 정보와 본문에 맞춥니다. 홈페이지의 Naver 소유확인 태그는 유지합니다.
 
 `font-subset.woff2`는 현재 HTML·CSS·JS·JSON·SVG의 문자와 ASCII를 포함한 작은 가변 글꼴입니다. CSS에서 먼저 사용하고, 빠진 문자는 원본 `font.woff2`로 표시합니다. 원본을 미리 다운로드하지 않으며 라이선스는 `src/assets/FONT-LICENSE.txt`에 보존합니다. 파생 글꼴의 이름은 `Ddirori Web`입니다.
 
@@ -53,7 +53,7 @@ GitHub DNS 검사·HTTPS 인증서 완료 후 다시 배포해 루트 경로를 
 
 ## 화면과 다운로드 출처
 
-Score의 3개 화면은 공개 1.0.2 App Store 원본이며 Clef & Staff라는 현재 공개 이름이 보입니다. 출처·실제 hash는 `src/assets/sources.json`에 있습니다. Studio·Play 이미지는 개발 화면이며 공개 빌드와의 차이를 본문에 표시합니다. 글꼴 라이선스는 `src/assets/FONT-LICENSE.txt`입니다. 웹 화면 검사는 네이티브 앱 QA나 스토어 캡처 검수를 대신하지 않습니다.
+Score의 세 화면은 한국 App Store의 띠로리 스코어 1.1.0에서 받은 악보함·필기·메트로놈 화면입니다. 출처·실제 hash는 `src/assets/sources.json`에 있습니다. Studio·Play 이미지는 개발 화면이며 공개 빌드와의 차이를 본문에 표시합니다. 글꼴 라이선스는 `src/assets/FONT-LICENSE.txt`입니다. 웹 화면 검사는 네이티브 앱 QA나 스토어 캡처 검수를 대신하지 않습니다.
 
 ## 2026-11-11 배포 확인
 

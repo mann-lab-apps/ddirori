@@ -62,9 +62,12 @@ try{
  check('practice tools belong to Score',await page.locator('#practice-tools').count()===1 && await page.getByRole('heading',{level:1}).count()===1);
  const storeLinks=page.locator('a[href*="apps.apple.com/"]');
  check('Score install links target the existing app',await storeLinks.count()===3 && await storeLinks.evaluateAll(links=>links.every(link=>new URL(link.href).pathname.endsWith('/id6808164371'))));
- check('Score explains the public store name',/Clef & Staff/.test(await page.locator('.score-store-note').textContent()));
+ check('Score explains the free iPhone and iPad availability',/iPhone · iPad.*무료/.test(await page.locator('.score-store-note').textContent()));
  check('Score does not claim an unreleased app',!(await page.locator('main').textContent()).includes('공개 준비 중'));
- check('Score presents three public reference images',await page.locator('img[src*="score-public-"]').count()===3);
+ const scoreImages=page.locator('img[src*="score-public-"]');
+ check('Score presents three public reference images',await scoreImages.count()===3);
+ await scoreImages.evaluateAll(images=>Promise.all(images.map(image=>image.decode())));
+ check('Score screenshot dimensions match the shipped files',await scoreImages.evaluateAll(images=>images.every(image=>image.naturalWidth===Number(image.getAttribute('width'))&&image.naturalHeight===Number(image.getAttribute('height')))));
  const recruitmentLink=page.getByRole('link',{name:'안드로이드 테스트 참여',exact:true});
  await recruitmentLink.focus();
  await page.keyboard.press('Enter');
@@ -74,7 +77,7 @@ try{
  const applicationUrl=new URL(await applyByEmail.getAttribute('href'));
  check('mobile Android recruitment offers a draft and the same visible email address',await applyByEmail.isVisible()&&applicationUrl.protocol==='mailto:'&&(await recruitment.locator('#android-test-email').textContent())===applicationUrl.pathname);
  check('private and local Score previews do not load GA',await page.evaluate(()=>!window.gtag&&!document.querySelector('script[src*="googletagmanager.com"]')));
- await page.getByText('왜 App Store에는 Clef & Staff라고 나오나요?',{exact:true}).click();
+ await page.getByText('Clef & Staff를 쓰고 있었어요. 어떻게 업데이트하나요?',{exact:true}).click();
  check('Score rename FAQ opens',await page.locator('.faq details').first().getAttribute('open')!==null);
  await page.emulateMedia({reducedMotion:'reduce'});
  check('reduced motion disables smooth scrolling',await page.locator('html').evaluate(n=>getComputedStyle(n).scrollBehavior==='auto'));

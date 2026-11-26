@@ -94,29 +94,29 @@
   },
   {
     "asset": "score-public-library.jpg",
-    "source": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/2c/7d/b5/2c7db5af-7261-5a9a-5632-dbda3c469e01/iphone-65-01-library.png/924x2000bb.jpg",
-    "kind": "Unchanged screenshot from the public Korean App Store listing; old brand visible",
+    "source": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/ef/bc/c9/efbcc949-9b7d-e4c9-93ac-c2f1b559ebaf/ddirori-score-iphone-1-library.jpg/924x2000bb.jpg",
+    "kind": "Unchanged screenshot from the public Korean App Store listing",
     "appId": 6808164371,
-    "version": "1.0.2",
-    "retrievedOn": "2026-11-11",
-    "sha256": "42ca4e04931ed6c212122b0dcaa335d8de3088b8f61e19898f7f385bcc4d29bf"
+    "version": "1.1.0",
+    "retrievedOn": "2026-11-26",
+    "sha256": "3fa0c5605745c46fc89e8c6efb1ad1d4175610dfaa0e18adb77815080b2a66c3"
   },
   {
     "asset": "score-public-annotation.jpg",
-    "source": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource211/v4/31/f0/19/31f01923-65a9-1522-301e-b45f2436a193/iphone-65-02-score.png/924x2000bb.jpg",
-    "kind": "Unchanged screenshot from the public Korean App Store listing; old brand visible",
+    "source": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/dc/8c/60/dc8c60d1-fbd5-8fa6-f29f-cd2f07371bcf/ddirori-score-iphone-2-annotation.jpg/924x2000bb.jpg",
+    "kind": "Unchanged screenshot from the public Korean App Store listing",
     "appId": 6808164371,
-    "version": "1.0.2",
-    "retrievedOn": "2026-11-11",
-    "sha256": "eb19e93bddb3f1a5175cc338e0838873bcb3ee70c31f979ae4fd5c4f6dd69c56"
+    "version": "1.1.0",
+    "retrievedOn": "2026-11-26",
+    "sha256": "d653ad21ae497c4e43b84b4288ba1efc684679400589c48be321c8e0c5086dc9"
   },
   {
-    "asset": "score-public-tuner.jpg",
-    "source": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/f6/ce/6e/f6ce6e73-b909-fb0b-828b-526529d25d86/iphone-65-03-tuner.png/924x2000bb.jpg",
-    "kind": "Unchanged screenshot from the public Korean App Store listing; old brand visible",
+    "asset": "score-public-metronome.jpg",
+    "source": "https://is1-ssl.mzstatic.com/image/thumb/PurpleSource221/v4/44/2a/67/442a67c3-7771-f614-d87e-40a6cd9b78c6/ddirori-score-iphone-4-metronome.jpg/924x2000bb.jpg",
+    "kind": "Unchanged screenshot from the public Korean App Store listing",
     "appId": 6808164371,
-    "version": "1.0.2",
-    "retrievedOn": "2026-11-11",
-    "sha256": "0b73a49c675e59a9328605c2ceacb8134ba8ed7e121c7cda20dc4e60289aefb7"
+    "version": "1.1.0",
+    "retrievedOn": "2026-11-26",
+    "sha256": "075711343c38ae610aed0e1c1753875c5432c59fd67d362be8dc24f9fbc776dd"
   }
 ]

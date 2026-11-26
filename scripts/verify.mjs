@@ -37,8 +37,9 @@ const appSchemas=[...score.matchAll(/<script type="application\/ld\+json">([\s\S
 assert.equal(appSchemas.length,1,'Score has one app schema');
 const appSchema=appSchemas[0];
 assert.equal(appSchema['@type'],'SoftwareApplication');
-assert.equal(appSchema.name,'Clef & Staff','Use the current public app name');
-assert.equal(appSchema.alternateName,'띠로리 스코어');
+assert.equal(appSchema.name,'띠로리 스코어','Use the current public app name');
+assert.equal(appSchema.alternateName,'Clef & Staff');
+assert(!score.includes('이름을 바꿀 예정'), 'Score reflects the published rename');
 assert.equal(appSchema.url,'https://ddirori.com/score/');
 assert.equal(appSchema.downloadUrl,'https://apps.apple.com/kr/app/id6808164371');
 assert.equal(appSchema.offers.price,0);
