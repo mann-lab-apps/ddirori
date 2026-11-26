@@ -11,8 +11,9 @@ const base=rawBase.replace(/\/$/,'');
 const measurementId=(process.env.GA4_MEASUREMENT_ID??'').trim();
 if(measurementId && !/^G-[A-Z0-9]+$/.test(measurementId))throw Error('Invalid GA4 measurement ID');
 if(measurementId==='G-1BY2PWFWXR')throw Error('Use the new Ddirori stream, not the legacy in-c ID');
-const routes=['index','score','play','studio','support','privacy','play-privacy'];
-const routePath=name=>name==='play-privacy'?'play/privacy':name;
+const routes=['index','score','score-ipad-pdf','play','studio','support','privacy','play-privacy'];
+const nestedRoutes={'play-privacy':'play/privacy','score-ipad-pdf':'score/guides/ipad-pdf'};
+const routePath=name=>nestedRoutes[name]??name;
 const destination=name=>name==='index'?`${base}/`:`${base}/${routePath(name)}/`;
 function rewrite(html,name){
   html=html.replace(/(href|src)="\.\/([^\"]+)"/g,(_,attribute,value)=>{

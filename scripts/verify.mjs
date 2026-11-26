@@ -7,7 +7,7 @@ const root=path.resolve(import.meta.dirname,'..');const dist=path.join(root,'dis
 let checked=0;
 const index=fs.readFileSync(path.join(dist,'index.html'),'utf8');
 const base=(index.match(/href="([^\"]*)\/score\//)?.[1]??'');
-for(const name of ['index','score','play','studio','support','privacy']){
+for(const name of ['index','score','score/guides/ipad-pdf','play','studio','support','privacy']){
  const html=fs.readFileSync(path.join(dist,name==='index'?'index.html':name+'/index.html'),'utf8');
  assert.equal((html.match(/<h1[ >]/g)||[]).length,1,`${name}: one heading`);
  assert(html.includes(`https://ddirori.com${name==='index'?'/':'/'+name+'/'}`),`${name}: canonical`);
@@ -28,6 +28,13 @@ const score=fs.readFileSync(path.join(dist,'score/index.html'),'utf8');
 assert.equal((score.match(/data-track-event="score_store_click"/g)||[]).length,3);
 assert.equal((score.match(/href="https:\/\/apps.apple.com\/kr\/app\/id6808164371"/g)||[]).length,3);
 assert(!score.includes('공개 준비 중'));
+const guidePath = 'score/guides/ipad-pdf/';
+const guide = fs.readFileSync(path.join(dist, guidePath, 'index.html'), 'utf8');
+assert(score.includes(`href="${base}/${guidePath}"`), 'Score links to the iPad PDF guide');
+assert(guide.includes(`<link rel="canonical" href="https://ddirori.com/${guidePath}">`));
+assert(guide.includes(`<meta property="og:url" content="https://ddirori.com/${guidePath}">`));
+assert(guide.includes(`href="${base}/score/#practice-tools"`));
+assert.match(guide, /href="https:\/\/apps.apple.com\/kr\/app\/id6808164371" data-track-event="score_store_click" data-track-location="guide" data-track-content-type="score"/);
 const recruitment=score.match(/<section id="android-test"[\s\S]*?<\/section>/)?.[0]??'';
 const applicationUrl=new URL(recruitment.match(/href="(mailto:[^"]+)"/)?.[1]?.replaceAll('&amp;','&')??'about:blank');
 assert.equal(applicationUrl.protocol,'mailto:','Score has an Android application draft');
@@ -54,8 +61,15 @@ const ga=JSON.parse(fs.readFileSync(path.join(dist,'analytics-config.json'),'utf
 assert.notEqual(ga.measurementId,'G-1BY2PWFWXR');assert.equal(ga.enabled,!!ga.measurementId);
 if(ga.enabled)assert(/^G-[A-Z0-9]+$/.test(ga.measurementId));
 const script=fs.readFileSync(path.join(dist,'main.js'),'utf8');assert(script.includes("['ddirori.com','www.ddirori.com'].includes(location.hostname)"));
-for(const image of JSON.parse(fs.readFileSync(path.join(dist,'assets/sources.json'),'utf8'))){
- if(!image.asset.startsWith('score-public-'))continue;
+const sources = JSON.parse(fs.readFileSync(path.join(dist,'assets/sources.json'),'utf8'));
+for (const scene of ['library', 'annotation']) {
+ const asset = `score-guide-ipad-${scene}.jpg`;
+ const source = sources.find(item => item.asset === asset);
+ assert(source && source.appId === 6808164371 && source.version);
+ assert(guide.includes(`src="${base}/assets/${asset}"`));
+}
+for (const image of sources) {
+ if (!/^(score-public-|score-guide-ipad-)/.test(image.asset)) continue;
  assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.join(dist,'assets',image.asset))).digest('hex'),image.sha256);
 }
 const studio=fs.readFileSync(path.join(dist,'studio/index.html'),'utf8');
@@ -79,6 +93,8 @@ assert(sharing.includes('href="https://in-c.mannlab.app/studio/part-pdf.html"'),
   'Studio sharing section links directly to the part PDF guide');
 const sitemap=fs.readFileSync(path.join(dist,'sitemap.xml'),'utf8');
 assert(sitemap.includes('<loc>https://ddirori.com/studio/</loc>'));
+assert(sitemap.includes(`<loc>https://ddirori.com/${guidePath}</loc>`));
+assert(!sitemap.includes('/score-ipad-pdf.html'));
 const lessons = fs.readFileSync(path.join(dist, 'lessons/index.html'), 'utf8');
 assert(lessons.includes('href="https://ddirori.com/lessons/"'));
 assert.equal(lessons.includes('name="robots" content="noindex,nofollow"'), Boolean(base));
@@ -91,4 +107,4 @@ for (const activity of ['dynamics', 'melody', 'echo']) {
 assert(fs.existsSync(path.join(dist, 'lessons/share.jpg')));
 assert(fs.existsSync(path.join(dist, 'lessons/home/index.html')));
 verifyLessonAudio(dist);
-console.log(`Verified 3 lesson tracks, 6 pages, ${checked} local references, 3 store CTAs, screenshot hashes and GA configuration`);
+console.log(`Verified 3 lesson tracks, 7 pages, ${checked} local references, 3 store CTAs, screenshot hashes and GA configuration`);
