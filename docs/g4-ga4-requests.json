@@ -1,0 +1,220 @@
+{
+  "common": {
+    "property_id": 563700721,
+    "date_ranges": [
+      {
+        "start_date": "2026-11-16",
+        "end_date": "2026-11-21",
+        "name": "before"
+      },
+      {
+        "start_date": "2026-11-23",
+        "end_date": "2026-11-28",
+        "name": "after"
+      }
+    ]
+  },
+  "base_dimension_filter": {
+    "and_group": {
+      "expressions": [
+        {
+          "filter": {
+            "field_name": "hostName",
+            "in_list_filter": {
+              "values": [
+                "ddirori.com",
+                "www.ddirori.com"
+              ],
+              "case_sensitive": true
+            }
+          }
+        },
+        {
+          "not_expression": {
+            "filter": {
+              "field_name": "sessionCampaignName",
+              "string_filter": {
+                "match_type": 2,
+                "value": "studio_release_validation_",
+                "case_sensitive": false
+              }
+            }
+          }
+        },
+        {
+          "not_expression": {
+            "filter": {
+              "field_name": "sessionSource",
+              "in_list_filter": {
+                "values": [
+                  "codex_setup",
+                  "release_check"
+                ],
+                "case_sensitive": true
+              }
+            }
+          }
+        },
+        {
+          "not_expression": {
+            "filter": {
+              "field_name": "sessionMedium",
+              "in_list_filter": {
+                "values": [
+                  "qa",
+                  "internal_validation"
+                ],
+                "case_sensitive": true
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "requests": {
+    "daily": {
+      "dimensions": [
+        "date"
+      ],
+      "metrics": [
+        "screenPageViews"
+      ]
+    },
+    "home": {
+      "dimensions": [],
+      "metrics": [
+        "activeUsers",
+        "screenPageViews"
+      ],
+      "extra_dimension_filters": [
+        {
+          "filter": {
+            "field_name": "pagePath",
+            "in_list_filter": {
+              "values": [
+                "/",
+                "/index.html"
+              ],
+              "case_sensitive": true
+            }
+          }
+        }
+      ]
+    },
+    "score": {
+      "dimensions": [],
+      "metrics": [
+        "activeUsers",
+        "screenPageViews"
+      ],
+      "extra_dimension_filters": [
+        {
+          "filter": {
+            "field_name": "pagePath",
+            "in_list_filter": {
+              "values": [
+                "/score/",
+                "/score",
+                "/score.html",
+                "/score/index.html",
+                "/score/index"
+              ],
+              "case_sensitive": true
+            }
+          }
+        }
+      ]
+    },
+    "clicks": {
+      "dimensions": [],
+      "metrics": [
+        "eventCount"
+      ],
+      "extra_dimension_filters": [
+        {
+          "filter": {
+            "field_name": "pagePath",
+            "in_list_filter": {
+              "values": [
+                "/score/",
+                "/score",
+                "/score.html",
+                "/score/index.html",
+                "/score/index"
+              ],
+              "case_sensitive": true
+            }
+          }
+        },
+        {
+          "filter": {
+            "field_name": "eventName",
+            "in_list_filter": {
+              "values": [
+                "score_store_click"
+              ],
+              "case_sensitive": true
+            }
+          }
+        }
+      ]
+    },
+    "homeToScore": {
+      "dimensions": [],
+      "metrics": [
+        "screenPageViews"
+      ],
+      "extra_dimension_filters": [
+        {
+          "filter": {
+            "field_name": "pagePath",
+            "in_list_filter": {
+              "values": [
+                "/score/",
+                "/score",
+                "/score.html",
+                "/score/index.html",
+                "/score/index"
+              ],
+              "case_sensitive": true
+            }
+          }
+        },
+        {
+          "filter": {
+            "field_name": "pageReferrer",
+            "string_filter": {
+              "match_type": 5,
+              "value": "^https://(www\\.)?ddirori\\.com(/(index\\.html)?)?(\\?[^#]*)?(#.*)?$",
+              "case_sensitive": false
+            }
+          }
+        }
+      ]
+    },
+    "scoreLanding": {
+      "dimensions": [],
+      "metrics": [
+        "sessions"
+      ],
+      "extra_dimension_filters": [
+        {
+          "filter": {
+            "field_name": "landingPage",
+            "in_list_filter": {
+              "values": [
+                "/score/",
+                "/score",
+                "/score.html",
+                "/score/index.html",
+                "/score/index"
+              ],
+              "case_sensitive": true
+            }
+          }
+        }
+      ]
+    }
+  }
+}

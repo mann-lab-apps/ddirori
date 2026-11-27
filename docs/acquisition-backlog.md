@@ -81,3 +81,11 @@ Ddirori GA4 MCP에서 속성 ID를 지정해 Data API 보고서를 읽었다. �
 11/22에는 무료 음악수업 버튼도 홈 첫 화면에 추가됐다. 11/26의 [스코어 1.1.0 소개 반영](https://github.com/mann-lab-apps/ddirori/pull/6)과 [iPad PDF 사용 가이드](https://github.com/mann-lab-apps/ddirori/pull/7)는 이틀 중간 비교 이후이며, 예정된 6일 비교에는 포함된다. 버튼 하나의 효과를 분리하기에는 표본과 비교 조건이 부족하다.
 
 다음 유입 실험 후보로 기존 Velog의 **띠로리 제작기 한 편**을 선택했다. 음악가 친구의 연습 불편을 다루고, 필기와 메트로놈 화면을 보여준다. 게시할 때는 [Velog 유입용 스코어 링크](https://ddirori.com/score/?utm_source=velog&utm_medium=referral&utm_campaign=score_build_log_01)를 사용한다. 6일 비교를 다시 조회한 뒤 게시 여부를 정한다.
+
+### G4 6일 비교용 배포 전 기준값
+
+2026-11-27 GA4 MCP 조회 기준으로 11/16~21 여섯 날짜 모두 운영 호스트에서 조회 행이 확인됐다. 같은 기간의 사이트 전체 조회수는 10회였고, 홈은 활성 사용자 9명·조회수 10회였다. 스코어 방문, App Store 이동 클릭, 홈을 직전 페이지로 하는 스코어 조회, 스코어로 시작한 세션은 모두 행이 없었다. 빈 행은 그대로 기록한다. 홈과 스코어의 경로 변형은 필터 안에서 한 번에 집계하므로 경로별 활성 사용자를 합산할 필요가 없다.
+
+배포 후 11/23~28 기간은 집계 대기다. 12월 1일경 [저장한 GA4 MCP 요청](g4-ga4-requests.json)으로 양쪽 기간을 재조회한다. 각 요청의 `dimensions`와 `metrics`를 `common`과 함께 `run_report`에 전달한다. `dimension_filter`에는 `base_dimension_filter`를 쓰고, `extra_dimension_filters`가 있으면 공통 필터와 함께 `and_group.expressions`에 넣는다. 과거 이틀씩 두 구간을 넣어 날짜 범위별 조회가 작동하는 것을 확인했다.
+
+날짜별 응답은 날짜가 해당 `dateRange`에 속하는 행만 사용한다. 두 날짜 범위를 요청하면 API가 상대 범위의 날짜에 0을 채운 행도 반환한다. 기간별 최종 비교에는 각 범위에 해당하는 집계 행만 사용하고, 표본 추출·잘림 여부와 실제 조회일을 함께 남긴다.
