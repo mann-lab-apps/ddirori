@@ -35,3 +35,19 @@ figure{margin:0}
 .score-guide-finish{border-top:1px solid var(--border);padding-top:clamp(30px,5vw,66px)}
 .score-guide-finish .actions{gap:16px 24px;margin-top:22px;align-items:center}
 .score-guide-link{display:inline-block;margin-top:26px}
+.score-guide-contents {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+  margin-top: 18px;
+}
+.score-guide-contents a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+.score-guide-tip, .score-guide-sharing p {
+  max-width: 42rem;
+  margin-top: 16px;
+  line-height: 1.8;
+}

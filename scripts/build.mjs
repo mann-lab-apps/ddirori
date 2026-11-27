@@ -13,6 +13,8 @@ if(measurementId && !/^G-[A-Z0-9]+$/.test(measurementId))throw Error('Invalid GA
 if(measurementId==='G-1BY2PWFWXR')throw Error('Use the new Ddirori stream, not the legacy in-c ID');
 const routes=['index','score','score-ipad-pdf','play','studio','support','privacy','play-privacy'];
 const nestedRoutes={'play-privacy':'play/privacy','score-ipad-pdf':'score/guides/ipad-pdf'};
+// Update only when the guide's main content changes.
+const guideLastModified = '2026-11-27';
 const routePath=name=>nestedRoutes[name]??name;
 const destination=name=>name==='index'?`${base}/`:`${base}/${routePath(name)}/`;
 function rewrite(html,name){
@@ -60,5 +62,12 @@ const privacyHtml=fs.readFileSync(privacy,'utf8').replaceAll('분석 상태: 설
 fs.writeFileSync(privacy,privacyHtml);fs.writeFileSync(path.join(dist,'privacy.html'),privacyHtml);
 fs.writeFileSync(path.join(dist,'.nojekyll'),'');
 fs.writeFileSync(path.join(dist,'robots.txt'),`User-agent: *\n${base?'Disallow: /':'Allow: /'}\nSitemap: https://ddirori.com/sitemap.xml\n`);
-fs.writeFileSync(path.join(dist,'sitemap.xml'),'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+[...routes, 'lessons'].map(name=>`  <url><loc>https://ddirori.com${name==='index'?'/':'/'+routePath(name)+'/'}</loc></url>`).join('\n')+'\n</urlset>\n');
+const sitemapEntries = [...routes, 'lessons'].map(name => {
+  const url = `https://ddirori.com${destination(name).slice(base.length)}`;
+  const lastmod = name === 'score-ipad-pdf' ? `<lastmod>${guideLastModified}</lastmod>` : '';
+  return `  <url><loc>${url}</loc>${lastmod}</url>`;
+});
+fs.writeFileSync(path.join(dist, 'sitemap.xml'),
+  '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
+  sitemapEntries.join('\n') + '\n</urlset>\n');
 console.log(`Built ${routes.length} pages; base=${base||'/'}; GA=${measurementId?'configured':'disabled (new stream pending)'}`);
