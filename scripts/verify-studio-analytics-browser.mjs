@@ -65,8 +65,15 @@ async function exercise(title, options, test) {
       googleTags: () => googleTagRequests });
     scenarios.push(title);
   } finally {
-    for (const gate of gates.values()) gate.resolve();
-    await page.context().close();
+    const context = page.context();
+    try {
+      // Keep new requests isolated while the page's fixture handlers finish.
+      await context.route('**/*', route => route.abort());
+      for (const gate of gates.values()) gate.resolve();
+      await page.unrouteAll({ behavior: 'wait' });
+    } finally {
+      await context.close();
+    }
   }
 }
 
@@ -210,10 +217,13 @@ try {
       assert.equal(googleTags(), 0);
     });
 
-  await exercise('actual browser download with JavaScript disabled', { device: mobile, javaScriptEnabled: false },
-    async ({ page, googleTags }) => {
+  // Use instant fragment scrolling so the pointer stays over the installer link.
+  await exercise('actual browser download with JavaScript disabled',
+    { device: { ...mobile, reducedMotion: 'reduce' }, javaScriptEnabled: false },
+    async ({ page, requests, googleTags }) => {
       await open(page);
       await activateInstaller(page, platformLink(page, 'windows'), 'windows');
+      assert.deepEqual(requests, ['windows']);
       assert.equal(googleTags(), 0);
     });
 
