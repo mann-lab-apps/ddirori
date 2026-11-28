@@ -65,8 +65,15 @@ async function exercise(title, options, test) {
       googleTags: () => googleTagRequests });
     scenarios.push(title);
   } finally {
-    for (const gate of gates.values()) gate.resolve();
-    await page.context().close();
+    const context = page.context();
+    try {
+      // Keep new requests isolated while the page's fixture handlers finish.
+      await context.route('**/*', route => route.abort());
+      for (const gate of gates.values()) gate.resolve();
+      await page.unrouteAll({ behavior: 'wait' });
+    } finally {
+      await context.close();
+    }
   }
 }
 
