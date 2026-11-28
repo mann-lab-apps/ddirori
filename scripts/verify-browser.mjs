@@ -113,7 +113,8 @@ try{
  await unsafe.goto(new URL('studio.html',base).href);
  await unsafe.getByRole('button',{name:'macOS',exact:true}).click();
  check('unsafe installer URL blocked',await unsafe.locator('[data-download-link]').isDisabled());
- const noJs=await browser.newPage({javaScriptEnabled:false});
+ // Keep fragment scrolling from competing with Playwright's click on the guide link.
+ const noJs=await browser.newPage({javaScriptEnabled:false,reducedMotion:'reduce'});
  await noJs.goto(new URL('studio.html',base).href);
  check('without JavaScript all three installers are reachable',await noJs.locator('#studio-platform-downloads a').evaluateAll(links=>links.map(link=>link.href)).then(urls=>studioManifest.downloads.every(item=>urls.includes(item.url))));
  check('no-JS visitors can access all service links',await noJs.locator('.footer-links').getByRole('link',{name:/^띠로리 (스튜디오|스코어|플레이)$/}).count()===3);
