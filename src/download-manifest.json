@@ -1,11 +1,11 @@
 {
-  "version": "0.1.0-alpha.45",
-  "releaseTag": "v0.1.0-alpha.45",
-  "releaseDate": "2026-11-27",
+  "version": "0.1.0-alpha.46",
+  "releaseTag": "v0.1.0-alpha.46",
+  "releaseDate": "2026-11-28",
   "releasePublished": true,
   "repositoryUrl": "https://github.com/mann-lab-apps/in-c",
-  "releaseUrl": "https://github.com/mann-lab-apps/in-c/releases/tag/v0.1.0-alpha.45",
-  "checksumsUrl": "https://github.com/mann-lab-apps/in-c/releases/download/v0.1.0-alpha.45/SHA256SUMS.txt",
+  "releaseUrl": "https://github.com/mann-lab-apps/in-c/releases/tag/v0.1.0-alpha.46",
+  "checksumsUrl": "https://github.com/mann-lab-apps/in-c/releases/download/v0.1.0-alpha.46/SHA256SUMS.txt",
   "signing": {
     "macOS": "Developer ID 서명 및 Apple 공증 완료.",
     "Windows": "미서명 프리릴리즈. SmartScreen 안내가 표시될 수 있습니다.",
@@ -19,9 +19,9 @@
       "architecture": "Universal",
       "format": "DMG",
       "available": true,
-      "fileName": "Ddirori-Studio-0.1.0-alpha.45-mac-universal.dmg",
-      "size": "252.5 MB",
-      "url": "https://github.com/mann-lab-apps/in-c/releases/download/v0.1.0-alpha.45/Ddirori-Studio-0.1.0-alpha.45-mac-universal.dmg"
+      "fileName": "Ddirori-Studio-0.1.0-alpha.46-mac-universal.dmg",
+      "size": "238.3 MB",
+      "url": "https://github.com/mann-lab-apps/in-c/releases/download/v0.1.0-alpha.46/Ddirori-Studio-0.1.0-alpha.46-mac-universal.dmg"
     },
     {
       "id": "windows",
@@ -30,9 +30,9 @@
       "architecture": "x64",
       "format": "NSIS 설치 파일",
       "available": true,
-      "fileName": "Ddirori-Studio-0.1.0-alpha.45-windows-x64-setup.exe",
-      "size": "131.0 MB",
-      "url": "https://github.com/mann-lab-apps/in-c/releases/download/v0.1.0-alpha.45/Ddirori-Studio-0.1.0-alpha.45-windows-x64-setup.exe"
+      "fileName": "Ddirori-Studio-0.1.0-alpha.46-windows-x64-setup.exe",
+      "size": "119.8 MB",
+      "url": "https://github.com/mann-lab-apps/in-c/releases/download/v0.1.0-alpha.46/Ddirori-Studio-0.1.0-alpha.46-windows-x64-setup.exe"
     },
     {
       "id": "linux",
@@ -41,9 +41,9 @@
       "architecture": "x86_64",
       "format": "AppImage",
       "available": true,
-      "fileName": "Ddirori-Studio-0.1.0-alpha.45-linux-x86_64.AppImage",
-      "size": "160.3 MB",
-      "url": "https://github.com/mann-lab-apps/in-c/releases/download/v0.1.0-alpha.45/Ddirori-Studio-0.1.0-alpha.45-linux-x86_64.AppImage"
+      "fileName": "Ddirori-Studio-0.1.0-alpha.46-linux-x86_64.AppImage",
+      "size": "145.8 MB",
+      "url": "https://github.com/mann-lab-apps/in-c/releases/download/v0.1.0-alpha.46/Ddirori-Studio-0.1.0-alpha.46-linux-x86_64.AppImage"
     }
   ]
 }
