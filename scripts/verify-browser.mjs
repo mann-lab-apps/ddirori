@@ -59,6 +59,17 @@ try{
  check('contact copy reports success',(await page.locator('.copy-status').textContent()).includes('복사했어요'));
  await page.goto(new URL('play.html',base).href);
  check('Play leads back to Studio',(await page.locator('.next-service a').getAttribute('href')).endsWith('/studio/'));
+ await page.getByRole('link',{name:'안드로이드 베타 참여'}).click();
+ check('Play beta link opens the recruitment page',new URL(page.url()).pathname.endsWith('/play/beta/'));
+ for(const width of [320,390,768,1440]){
+  await page.setViewportSize({width,height:1000});
+  check(`play-beta-${width} fits the viewport`,await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
+  check(`play-beta-${width} application is visible`,await page.locator('[data-play-beta-apply]').isVisible());
+  if([390,1440].includes(width))await page.screenshot({path:path.join(out,`play-beta-${width}.png`),fullPage:true});
+ }
+ await page.locator('[data-play-beta-apply]').focus();
+ check('Play beta application is keyboard focusable',
+  await page.locator('[data-play-beta-apply]').evaluate(link=>document.activeElement===link));
  await page.goto(new URL('score.html#practice-tools',base).href);
  check('practice tools belong to Score',await page.locator('#practice-tools').count()===1 && await page.getByRole('heading',{level:1}).count()===1);
  const storeLinks=page.locator('a[href*="apps.apple.com/"]');

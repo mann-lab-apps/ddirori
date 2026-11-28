@@ -3,7 +3,7 @@
 띠로리 스코어·플레이·스튜디오를 소개하는 하나의 공식 웹사이트입니다. 운영: Mannlab.
 
 - 대표 도메인: https://ddirori.com (대표 주소 HTTPS 공개 완료)
-- 경로: `/score/`, `/play/`, `/studio/`, `/support/`, `/privacy/`
+- 경로: `/score/`, `/play/`, `/play/beta/`, `/studio/`, `/support/`, `/privacy/`
 - 기존 in-c 웹사이트와 앱 배포는 이 저장소에서 변경하지 않습니다.
 
 유입 개선 작업과 SEO·AI 검색 후보는 [띠로리 스코어 유입 개선 백로그](docs/acquisition-backlog.md)에서 관리합니다.
@@ -19,6 +19,10 @@ python3 -m http.server 8117 --bind 127.0.0.1 --directory dist
 ```
 
 main push는 GitHub Actions에서 검사 후 GitHub Pages로 배포합니다. Pages의 기본 경로를 자동 적용하므로 도메인 연결 전 GitHub 프로젝트 URL에서도 열립니다. GitHub 임시 주소는 검색 색인을 요청하지 않습니다.
+
+## 플레이 Android 테스트 모집
+
+`/play/beta/`는 기본적으로 기존 지원 메일의 신청 초안을 엽니다. Google Forms로 접수하려면 저장소 Actions 변수 `PLAY_BETA_FORM_URL`에 공개 응답자용 HTTPS 링크를 넣고 Pages 빌드를 실행합니다. 비공개 응답 시트는 운영 계정에서 관리합니다. 모집 페이지에는 직접 입력 폼이나 분석 스크립트를 추가하지 않습니다.
 
 ## 검색 정보와 웹 글꼴
 

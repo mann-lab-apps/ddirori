@@ -7,11 +7,11 @@ const root=path.resolve(import.meta.dirname,'..');const dist=path.join(root,'dis
 let checked=0;
 const index=fs.readFileSync(path.join(dist,'index.html'),'utf8');
 const base=(index.match(/href="([^\"]*)\/score\//)?.[1]??'');
-for(const name of ['index','score','score/guides/ipad-pdf','play','studio','support','privacy']){
+for(const name of ['index','score','score/guides/ipad-pdf','play','play/beta','studio','support','privacy']){
  const html=fs.readFileSync(path.join(dist,name==='index'?'index.html':name+'/index.html'),'utf8');
  assert.equal((html.match(/<h1[ >]/g)||[]).length,1,`${name}: one heading`);
  assert(html.includes(`https://ddirori.com${name==='index'?'/':'/'+name+'/'}`),`${name}: canonical`);
- assert(html.includes(`name="robots" content="${base?'noindex,nofollow':'index,follow'}"`),`${name}: production indexing / staging exclusion`);
+ assert(html.includes(`name="robots" content="${base||name==='play/beta'?'noindex,nofollow':'index,follow'}"`),`${name}: production indexing / staging exclusion`);
  assert(!/href="https:\/\/in-c\.mannlab\.app\/(?:clef-and-staff\/)?(?:support|privacy)\.html/.test(html),
    `${name}: no legacy support links`);
  assert(html.includes('© 2026 MannLab. All rights reserved.'),`${name}: operator copyright`);
@@ -106,5 +106,20 @@ for (const activity of ['dynamics', 'melody', 'echo']) {
 }
 assert(fs.existsSync(path.join(dist, 'lessons/share.jpg')));
 assert(fs.existsSync(path.join(dist, 'lessons/home/index.html')));
+const play=fs.readFileSync(path.join(dist,'play/index.html'),'utf8');
+const playBeta=fs.readFileSync(path.join(dist,'play/beta/index.html'),'utf8');
+assert(play.includes(`href="${base}/play/beta/"`),'Play links to its Android beta page');
+assert(!sitemap.includes('/play/beta/'),'Keep the temporary recruitment route out of the sitemap');
+assert(!/<form\b|<script\b|<iframe\b/i.test(playBeta),'No intake, embedded form, or analytics on the website');
+const playBetaApplication=new URL(playBeta.match(/data-play-beta-apply href="([^"]+)"/)[1].replaceAll('&amp;','&'));
+if(playBetaApplication.protocol==='mailto:'){
+ assert.equal(playBetaApplication.pathname,'daga4242@gmail.com');
+ assert.equal(playBetaApplication.searchParams.get('subject'),'[띠로리 플레이] 안드로이드 베타 신청');
+ assert(playBetaApplication.searchParams.get('body').includes('Play 스토어 계정 이메일'));
+ assert(playBeta.includes('data-play-beta-email-help'));
+}else{
+ assert(['https://docs.google.com','https://forms.gle'].includes(playBetaApplication.origin));
+ assert(!playBetaApplication.search&&!playBetaApplication.hash&&!playBeta.includes('data-play-beta-email-help'));
+}
 verifyLessonAudio(dist);
-console.log(`Verified 3 lesson tracks, 7 pages, ${checked} local references, 3 store CTAs, screenshot hashes and GA configuration`);
+console.log(`Verified 3 lesson tracks, 8 pages, ${checked} local references, 3 store CTAs, Play beta intake, screenshot hashes and GA configuration`);

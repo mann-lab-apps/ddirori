@@ -28,6 +28,7 @@ jobs:
         env:
           PAGES_BASE_PATH: ${{ steps.pages.outputs.base_path }}
           GA4_MEASUREMENT_ID: ${{ vars.GA4_MEASUREMENT_ID }}
+          PLAY_BETA_FORM_URL: ${{ vars.PLAY_BETA_FORM_URL }}
       - name: Verify website
         run: node scripts/verify.mjs
       - uses: actions/upload-pages-artifact@v5

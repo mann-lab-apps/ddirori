@@ -1,0 +1,59 @@
+.play-beta .beta-main {
+  max-width: 880px;
+  padding-block: clamp(2.5rem, 7vw, 6rem) clamp(4rem, 8vw, 7rem);
+}
+
+.play-beta h1 {
+  font-size: clamp(2rem, 6vw, 4.25rem);
+}
+
+.play-beta h2 {
+  font-size: clamp(1.35rem, 4vw, 1.75rem);
+}
+
+.beta-back {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  font-weight: 650;
+}
+
+.beta-apply-help,
+.beta-data p {
+  max-width: 40rem;
+  margin-top: 1rem;
+  color: var(--muted);
+  font-size: 1rem;
+  overflow-wrap: anywhere;
+}
+
+.beta-steps {
+  margin-block: 2.75rem;
+  padding: clamp(1.25rem, 5vw, 2rem);
+  border-radius: 1.25rem;
+  background: var(--selection);
+}
+
+.beta-steps ol {
+  display: grid;
+  gap: 1rem;
+  margin: 1rem 0 0;
+  padding-inline-start: 1.35rem;
+}
+
+.beta-steps li p {
+  margin-top: 0.25rem;
+  color: var(--muted);
+}
+
+.beta-data a,
+.beta-footer a {
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+}
+
+.beta-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+}
